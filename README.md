@@ -6,5 +6,4 @@
 
 ```shell
 npm init vite@latest student-attendance-management-vue -- --template vue-ts
-
 ```
