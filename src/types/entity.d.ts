@@ -3,28 +3,53 @@ interface Base {
   update_time?: Date
 }
 
-export interface UserEntity extends Base {
+export interface College extends Base {
+  college_id?: number
+  college_name?: string
+  description?: string
+}
+
+export interface Major extends Base {
+  major_id?: number
+  major_name?: string
+  description?: string
+}
+
+export interface Classes extends Base {
+  classes_id?: number
+  classes_name?: string
+  major_id?: number
+  major?: Major
+  college_id?: number
+  college?: College
+  description?: string
+}
+
+export interface User extends Base {
   user_id?: number
   username?: string
   password?: string
   real_name?: string
-  gender?: string
+  gender?: number
   is_status?: boolean
   description?: string
+  classes_id?: number
+  classes?: Classes
 }
 
-export interface RoleEntity extends Base {
+export interface Role extends Base {
   role_id?: number
   role_name?: string
+  role_code?: string
   is_status?: boolean
   description?: string
 }
 
-export interface MenuEntity extends Base {
+export interface Menu extends Base {
   menu_id?: number
   parent_id?: number
   menu_title?: string
-  menu_type?: string
+  menu_type?: number
   router_name?: string
   router_path?: string
   component?: string
@@ -35,15 +60,9 @@ export interface MenuEntity extends Base {
   is_show?: boolean
   is_sub?: boolean
   is_status?: boolean
-  is_delete?: boolean
   description?: string
 }
 
-export interface MenuInfoDto {
-  role?: MenuEntity
-  menu_ids?: number[]
-}
-
-export interface MenuTreeDto extends MenuEntity {
-  children?: MenuTreeDto[]
+export interface MenuTree extends Menu {
+  children?: MenuTree[]
 }

@@ -1,6 +1,6 @@
-export interface Menu {
+export interface MenuItemInfo {
   title?: string
   icon?: string
   path?: string
-  children?: Menu[]
+  children?: MenuItemInfo[]
 }

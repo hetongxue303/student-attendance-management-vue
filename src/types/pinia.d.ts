@@ -1,6 +1,6 @@
 import { RouteRecordRaw } from 'vue-router'
-import { MenuEntity } from './entity'
-import { Menu } from './element'
+import { Menu } from './entity'
+import { MenuItemInfo } from './element'
 
 interface AppType {
   collapse: boolean
@@ -23,8 +23,8 @@ interface TabsType {
 }
 
 interface PermissionType {
-  rawMenu: MenuEntity[]
-  menuItem: Menu[]
+  rawMenu: Menu[]
+  menuItem: MenuItemInfo[]
   routers: RouteRecordRaw[]
   permission: string[]
 }

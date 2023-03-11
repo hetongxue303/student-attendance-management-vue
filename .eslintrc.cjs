@@ -65,6 +65,8 @@ module.exports = {
     'vue/require-component-is': 0,
     'no-param-reassign': 0,
     'no-unused-vars': 0,
+    'no-return-assign': 0,
+    'no-shadow': 0,
     camelcase: 0
   }
 }

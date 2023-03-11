@@ -1,4 +1,4 @@
-import { MenuEntity, MenuTreeDto } from '../types/entity'
+import { Menu, MenuTree } from '../types/entity'
 
 export interface Tree {
   id: number
@@ -12,7 +12,7 @@ export interface Tree {
  * @param parent_id 父ID
  */
 export const filterMenuTree = (
-  menus: MenuTreeDto[],
+  menus: MenuTree[],
   parent_id: number
 ): Tree[] => {
   const data: Tree[] = []
@@ -34,7 +34,7 @@ export const filterMenuTree = (
  * 过滤用户菜单ID
  * @param menus 用户菜单信息
  */
-export const filterMenuKey = (menus: MenuEntity[]): number[] => {
+export const filterMenuKey = (menus: Menu[]): number[] => {
   const data: number[] = []
   const sub_id: number[] = menus
     .filter((item) => item.is_sub)

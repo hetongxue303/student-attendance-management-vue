@@ -1,11 +1,10 @@
 import * as qs from 'qs'
-import axios from '../utils/request'
+import axios, { base } from '../utils/request'
 
-const baseApi = import.meta.env.VITE_BASIC_API
 export const login = (data: any) => {
   return axios({
     method: 'POST',
-    url: `${baseApi}/login`,
+    url: `${base}/login`,
     data: qs.stringify(data),
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded'
@@ -16,6 +15,13 @@ export const login = (data: any) => {
 export const logout = () => {
   return axios({
     method: 'GET',
-    url: `${baseApi}/logout`
+    url: `${base}/logout`
+  })
+}
+
+export const getCaptcha = () => {
+  return axios({
+    method: 'GET',
+    url: `${base}/captcha-image`
   })
 }

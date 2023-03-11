@@ -1,6 +1,6 @@
 import { RouteRecordRaw } from 'vue-router'
-import { Menu } from '../types/element'
-import { MenuEntity } from '../types/entity'
+import { MenuItemInfo } from '../types/element'
+import { Menu } from '../types/entity'
 
 // 解决vite不能使用vue3+ts动态导入问题
 const modules = import.meta.glob('../views/**/*.vue')
@@ -10,8 +10,11 @@ const modules = import.meta.glob('../views/**/*.vue')
  * @param menus 用户菜单信息
  * @param parent_id 父ID
  */
-export const filterMenu = (menus: MenuEntity[], parent_id: number): Menu[] => {
-  const data: Menu[] = []
+export const filterMenu = (
+  menus: Menu[],
+  parent_id: number
+): MenuItemInfo[] => {
+  const data: MenuItemInfo[] = []
   menus
     .filter(
       (item) =>
@@ -34,7 +37,7 @@ export const filterMenu = (menus: MenuEntity[], parent_id: number): Menu[] => {
  * 过滤路由信息
  * @param menus 用户菜单信息
  */
-export const filterRouter = (menus: MenuEntity[]): RouteRecordRaw[] => {
+export const filterRouter = (menus: Menu[]): RouteRecordRaw[] => {
   const data: RouteRecordRaw[] = []
   menus
     .filter((item) => !item.is_sub)
