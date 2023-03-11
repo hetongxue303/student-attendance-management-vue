@@ -6,6 +6,8 @@ import axios, {
 import { ElMessage, ElNotification } from 'element-plus'
 import { getToken } from './auth'
 import NProgress from '../plugins/nProgress'
+import { useUserStore } from '../store/modules/user'
+import { useRouter } from 'vue-router'
 
 export const base: string = import.meta.env.VITE_BASIC_API
 
@@ -39,8 +41,13 @@ axios.interceptors.response.use(
     return response
   },
   async (error: AxiosError) => {
-    // const { message } = error
-    // if (message.includes('500')) ElMessage.error('服务器异常')
+    const { response } = error
+    if (response?.status === 500) ElMessage.error('服务器异常')
+    if (response?.status === 401) {
+      ElMessage.error('登录过期')
+      window.location.replace('/login')
+      useUserStore().systemLogout()
+    }
     return Promise.reject(error)
   }
 )

@@ -74,7 +74,7 @@ const loginHandle = async (formEl?: FormInstance) => {
       })
         .then(({ data, status }) => {
           if (data.code === 200 && status === 200) {
-            // userStore.setUserInfo(data)
+            userStore.setUserInfo(data)
             ElNotification.success({
               message: '登陆成功',
               duration: DURATION_TIME

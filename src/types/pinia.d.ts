@@ -9,9 +9,11 @@ interface AppType {
 interface UserType {
   authorization: string
   username: string
+  realName: string
+  gender: number
   avatar: string
-  is_Status?: boolean
-  roles: string
+  isStatus?: boolean
+  roles: string[]
   isAdmin: boolean
 }
 

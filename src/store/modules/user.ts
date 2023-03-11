@@ -18,33 +18,43 @@ export const useUserStore = defineStore('user', {
     return {
       authorization: getToken() || '',
       avatar: '',
-      is_Status: undefined,
+      isStatus: undefined,
       username: '',
-      roles: '',
-      isAdmin: false
+      roles: [],
+      isAdmin: false,
+      realName: '',
+      gender: 0
     }
   },
   getters: {
     getAuthorization: (state) => state.authorization,
     getRoles: (state) => state.roles,
-    getStatus: (state) => state.is_Status,
+    getStatus: (state) => state.isStatus,
     getUsername: (state) => state.username,
     getAvatar: (state) => state.avatar,
-    getIsAdmin: (state) => state.isAdmin
+    getIsAdmin: (state) => state.isAdmin,
+    getRealName: (state) => state.realName,
+    getGender: (state) => state.gender
   },
   actions: {
     setUserInfo(data: any) {
       const permissionStore = usePermissionStore()
-      const { access_token, expire_time, login } = data
+      const { access_token, expire_time, user } = data
       const token = `bearer ${access_token}`
+      this.authorization = token
+      this.isStatus = user.is_status
+      this.username = user.username
+      this.isAdmin = user.is_admin
+      this.realName = user.real_name
+      this.gender = user.gender
+      this.roles = user.roles
+      this.avatar = user.avatar
       setToken(token)
       setTokenTime(new Date().getTime() + expire_time)
-      this.authorization = token
-      this.is_Status = login.is_status
-      this.username = login.username
-      permissionStore.rawMenu = login.menus
-      permissionStore.menuItem = filterMenu(login.menus, 0)
-      permissionStore.routers = filterRouter(login.menus)
+      permissionStore.permission = user.permission
+      permissionStore.rawMenu = user.menus
+      permissionStore.menuItem = filterMenu(user.menus, 0)
+      permissionStore.routers = filterRouter(user.menus)
       permissionStore.setRouter()
     },
     systemLogout() {
