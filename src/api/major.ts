@@ -1,10 +1,14 @@
 import axios, { base } from '../utils/request'
+import { QueryMajor } from '../types/query'
 
 export const getMajorListAll = () => {
   return axios({ method: 'GET', url: `${base}/major/list/all` })
 }
-export const getMajorListByPage = (params: any) => {
+export const getMajorListByPage = (params: QueryMajor) => {
   return axios({ method: 'GET', url: `${base}/major/list`, params })
+}
+export const getMajorListByCollegeID = (college_id: number) => {
+  return axios({ method: 'GET', url: `${base}/major/college_id/${college_id}` })
 }
 
 export const addMajor = (data: any) => {

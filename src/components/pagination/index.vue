@@ -1,28 +1,4 @@
-<template>
-  <el-pagination
-    class="pagination"
-    :current-page="props.currentPage"
-    :page-size="props.pageSize"
-    :total="props.total"
-    :page-sizes="props.pageSizes"
-    :small="props.small"
-    :disabled="props.disabled"
-    :background="props.background"
-    :layout="props.layout"
-    :prev-text="props.prevText"
-    :next-text="props.nextText"
-    :hide-on-single-page="props.hideOnSinglePage"
-    @size-change="handleSizeChange"
-    @current-change="handleCurrentChange"
-  />
-</template>
-
 <script setup lang="ts">
-const emit = defineEmits<{
-  (e: 'current-change', currentPage: number): void
-  (e: 'size-change', currentPage: number): void
-}>()
-
 const props = withDefaults(
   defineProps<{
     currentPage: number
@@ -48,9 +24,32 @@ const props = withDefaults(
     hideOnSinglePage: false
   }
 )
+const emit = defineEmits<{
+  (e: 'current-change', currentPage: number): void
+  (e: 'size-change', currentPage: number): void
+}>()
 const handleCurrentChange = (value: number) => emit('current-change', value)
 const handleSizeChange = (value: number) => emit('size-change', value)
 </script>
+
+<template>
+  <el-pagination
+    class="pagination"
+    :current-page="props.currentPage"
+    :page-size="props.pageSize"
+    :total="props.total"
+    :page-sizes="props.pageSizes"
+    :small="props.small"
+    :disabled="props.disabled"
+    :background="props.background"
+    :layout="props.layout"
+    :prev-text="props.prevText"
+    :next-text="props.nextText"
+    :hide-on-single-page="props.hideOnSinglePage"
+    @size-change="handleSizeChange"
+    @current-change="handleCurrentChange"
+  />
+</template>
 
 <style scoped lang="scss">
 .pagination {

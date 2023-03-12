@@ -1,5 +1,5 @@
 import { RouteRecordRaw } from 'vue-router'
-import { MenuItemInfo } from '../types/element'
+import { MenuItemInfo } from '../types/element-plus'
 import { Menu } from '../types/entity'
 
 // 解决vite不能使用vue3+ts动态导入问题
@@ -49,7 +49,7 @@ export const filterRouter = (menus: Menu[]): RouteRecordRaw[] => {
         meta: {
           title: item.menu_title as string,
           icon: item.icon as string,
-          type: item.menu_type as string,
+          type: item.menu_type as number,
           show: item.is_show as boolean,
           sub: item.is_sub as boolean,
           status: item.is_status as boolean

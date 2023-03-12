@@ -15,7 +15,7 @@ export const deleteClasses = (id: number) => {
   return axios({ method: 'DELETE', url: `${base}/classes/delete/${id}` })
 }
 
-export const deleteBatchClasses = (data: number[]) => {
+export const batchDeleteClasses = (data: number[]) => {
   return axios({ method: 'PUT', url: `${base}/classes/delete/batch`, data })
 }
 export const updateClasses = (data: any) => {

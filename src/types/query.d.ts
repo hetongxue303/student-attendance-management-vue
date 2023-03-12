@@ -3,11 +3,17 @@ interface Page {
   size: number
 }
 
-export interface QueryCollege extends Page {}
+export interface QueryCollege extends Page {
+  college_name?: string
+}
 
-export interface QueryMajor extends Page {}
+export interface QueryMajor extends Page {
+  major_name?: string
+}
 
-export interface QueryClasses extends Page {}
+export interface QueryClasses extends Page {
+  classes_name?: string
+}
 
 export interface QueryUser extends Page {}
 

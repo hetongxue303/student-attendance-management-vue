@@ -51,7 +51,6 @@ const collapse = computed((): boolean => appStore.getCollapse)
 :deep(.el-main) {
   height: 100%;
   width: 100%;
-  padding: 0;
 }
 
 :deep(.el-footer) {

@@ -18,7 +18,7 @@ export const PRIVATE_KEY =
   'ar+O0KTttKUSDEH5w20hvzc933nmqxINgu744utYrd2rn85fArSME0LlAkEA/R5I\n' +
   'Ae6A8NQDhSnstfKXB73mQAmAkF27siUBSlg57eBLPBJ854LtOCZ1/itdbRGPm3g0\n' +
   'IPKI7Em1/0lXtTisQQ=='
-export const DURATION_TIME = 2000
+export const DURATION_TIME = 1500
 export const COOKIE_EXPIRE_TIME = 10 * 60 * 1000 // 10分钟
 export const DEFAULT_PASSWORD = '123456'
 export const DATE_TIME_FORMAT = 'YYYY-MM-DD HH:mm:ss'

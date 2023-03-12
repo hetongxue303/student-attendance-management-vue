@@ -11,15 +11,17 @@ export interface College extends Base {
 
 export interface Major extends Base {
   major_id?: number
+  college_id?: number
+  college?: College
   major_name?: string
   description?: string
 }
 
 export interface Classes extends Base {
   classes_id?: number
-  classes_name?: string
   major_id?: number
   major?: Major
+  classes_name?: string
   college_id?: number
   college?: College
   description?: string

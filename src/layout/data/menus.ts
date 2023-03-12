@@ -1,4 +1,4 @@
-import { MenuItemInfo } from '../../types/element'
+import { MenuItemInfo } from '../../types/element-plus'
 
 export const menus: Array<MenuItemInfo> = [
   {

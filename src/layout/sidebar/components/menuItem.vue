@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { MenuItemInfo } from '../../../types/element'
+import { MenuItemInfo } from '../../../types/element-plus'
 
 withDefaults(defineProps<{ data: MenuItemInfo[] }>(), {})
 </script>

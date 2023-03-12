@@ -1,6 +1,6 @@
 import { RouteRecordRaw } from 'vue-router'
 import { Menu } from './entity'
-import { MenuItemInfo } from './element'
+import { MenuItemInfo } from './element-plus'
 
 interface AppType {
   collapse: boolean
