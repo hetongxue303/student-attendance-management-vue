@@ -38,16 +38,18 @@ export const MessageInfo = (
  * 确认框
  * @param text 文本
  * @param tip 提示
- * @param success 成功回调
- * @param error 失败回调
+ * @param confirm 确认回调
+ * @param cancel 取消回调
+ * @param always 成功与否都会执行
  * @param confirmText 确认按钮文本
  * @param cancelText 返回按钮文本
  */
 export const ConfirmBox = (
   text: string,
   tip: string,
-  success: () => void,
-  error?: () => void,
+  confirm: () => void,
+  cancel?: () => void,
+  always?: () => void,
   confirmText = '确认',
   cancelText = '返回'
 ) => {
@@ -56,6 +58,7 @@ export const ConfirmBox = (
     cancelButtonText: cancelText,
     type: 'warning'
   })
-    .then(() => success())
-    .catch(() => (error ? error() : null))
+    .then(() => confirm())
+    .catch(() => (cancel ? cancel() : null))
+    .finally(() => (always ? always() : null))
 }

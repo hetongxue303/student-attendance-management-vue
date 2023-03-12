@@ -3,11 +3,12 @@ import { onMounted, reactive, ref, watch } from 'vue'
 import { FormInstance, ElMessage, ElNotification } from 'element-plus'
 import { useUserStore } from '../store/modules/user'
 import { useRoute, useRouter } from 'vue-router'
-import { getCaptcha, login } from '../api/auth'
+import { getCaptcha, login } from '../api/security'
 import { decrypt, encrypt } from '../utils/jsencrypt'
 import { encryptPasswordToMD5 } from '../hook/encrypt'
 import { DURATION_TIME } from '../settings'
 import { useCookies } from '@vueuse/integrations/useCookies'
+import { ILogin } from '../types/entity'
 
 const route = useRoute()
 const router = useRouter()
@@ -17,12 +18,7 @@ const ruleFormRef = ref<FormInstance>()
 const loading = ref(false)
 const redirect = ref('')
 const imgUrl = ref('')
-const loginFrom: {
-  username: string
-  password: string
-  code: string
-  rememberMe: boolean
-} = reactive({
+const loginFrom: ILogin = reactive({
   username: '',
   password: '',
   code: '',

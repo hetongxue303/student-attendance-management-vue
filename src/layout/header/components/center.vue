@@ -3,7 +3,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { useCookies } from '@vueuse/integrations/useCookies'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '../../../store/modules/user'
-import { logout } from '../../../api/auth'
+import { logout } from '../../../api/security'
 
 const userStore = useUserStore()
 const cookie = useCookies()

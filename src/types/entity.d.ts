@@ -3,6 +3,13 @@ interface Base {
   update_time?: Date
 }
 
+export interface ILogin {
+  username: string
+  password: string
+  code: string
+  rememberMe: boolean
+}
+
 export interface College extends Base {
   college_id?: number
   college_name?: string

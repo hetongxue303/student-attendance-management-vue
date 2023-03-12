@@ -1,7 +1,8 @@
 import * as qs from 'qs'
 import axios, { base } from '../utils/request'
+import { ILogin } from '../types/entity'
 
-export const login = (data: any) => {
+export const login = (data: ILogin) => {
   return axios({
     method: 'POST',
     url: `${base}/login`,

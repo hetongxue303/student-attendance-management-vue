@@ -1,13 +1,15 @@
 import axios, { base } from '../utils/request'
+import { QueryClasses } from '../types/query'
+import { Classes } from '../types/entity'
 
 export const getClassesListAll = () => {
   return axios({ method: 'GET', url: `${base}/classes/list/all` })
 }
-export const getClassesListByPage = (params: any) => {
+export const getClassesListByPage = (params: QueryClasses) => {
   return axios({ method: 'GET', url: `${base}/classes/list`, params })
 }
 
-export const addClasses = (data: any) => {
+export const addClasses = (data: Classes) => {
   return axios({ method: 'POST', url: `${base}/classes/add`, data })
 }
 
@@ -18,6 +20,6 @@ export const deleteClasses = (id: number) => {
 export const batchDeleteClasses = (data: number[]) => {
   return axios({ method: 'PUT', url: `${base}/classes/delete/batch`, data })
 }
-export const updateClasses = (data: any) => {
+export const updateClasses = (data: Classes) => {
   return axios({ method: 'PUT', url: `${base}/classes/update`, data })
 }

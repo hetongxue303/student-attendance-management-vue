@@ -1,5 +1,6 @@
 import axios, { base } from '../utils/request'
 import { QueryMajor } from '../types/query'
+import { Major } from '../types/entity'
 
 export const getMajorListAll = () => {
   return axios({ method: 'GET', url: `${base}/major/list/all` })
@@ -11,7 +12,7 @@ export const getMajorListByCollegeID = (college_id: number) => {
   return axios({ method: 'GET', url: `${base}/major/college_id/${college_id}` })
 }
 
-export const addMajor = (data: any) => {
+export const addMajor = (data: Major) => {
   return axios({ method: 'POST', url: `${base}/major/add`, data })
 }
 
@@ -22,6 +23,6 @@ export const deleteMajor = (id: number) => {
 export const batchDeleteMajor = (data: number[]) => {
   return axios({ method: 'PUT', url: `${base}/major/delete/batch`, data })
 }
-export const updateMajor = (data: any) => {
+export const updateMajor = (data: Major) => {
   return axios({ method: 'PUT', url: `${base}/major/update`, data })
 }
