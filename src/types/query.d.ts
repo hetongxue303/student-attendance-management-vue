@@ -26,3 +26,5 @@ export interface QueryRole extends Page {
 export interface QueryMenu extends Page {
   menu_title?: string
 }
+
+export interface QueryMenuTree {}

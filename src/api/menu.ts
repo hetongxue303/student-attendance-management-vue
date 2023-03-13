@@ -1,5 +1,5 @@
 import axios, { base } from '../utils/request'
-import { QueryMenu } from '../types/query'
+import { QueryMenu, QueryMenuTree } from '../types/query'
 import { Menu } from '../types/entity'
 
 export const getMenuListAll = () => {
@@ -7,6 +7,9 @@ export const getMenuListAll = () => {
 }
 export const getMenuListByPage = (params: QueryMenu) => {
   return axios({ method: 'GET', url: `${base}/menu/list`, params })
+}
+export const getMenuListByTree = (params?: QueryMenuTree) => {
+  return axios({ method: 'GET', url: `${base}/menu/list/tree`, params })
 }
 
 export const addMenu = (data: Menu) => {

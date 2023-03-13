@@ -56,7 +56,7 @@ const handleRememberMe = (status: boolean) => {
     cookie.remove(userinfo.rememberMe)
   }
 }
-const loginHandle = async (formEl?: FormInstance) => {
+const handleLogin = async (formEl?: FormInstance) => {
   if (!formEl) return
   await formEl.validate(async (valid) => {
     if (valid) {
@@ -146,7 +146,7 @@ onMounted(() => {
               prefix-icon="lock"
               placeholder="密码"
               show-password
-              @keyup.enter="loginHandle(ruleFormRef)"
+              @keyup.enter="handleLogin(ruleFormRef)"
             />
           </el-form-item>
           <el-form-item
@@ -164,7 +164,7 @@ onMounted(() => {
                   size="default"
                   placeholder="验证码"
                   prefix-icon="key"
-                  @keyup.enter="loginHandle(ruleFormRef)"
+                  @keyup.enter="handleLogin(ruleFormRef)"
                 />
               </el-col>
               <el-col :span="8" class="flex justify-center items-center">
@@ -184,8 +184,8 @@ onMounted(() => {
             <el-button
               type="primary"
               :loading="loading"
-              @keyup.enter="loginHandle(ruleFormRef)"
-              @click="loginHandle(ruleFormRef)"
+              @keyup.enter="handleLogin(ruleFormRef)"
+              @click="handleLogin(ruleFormRef)"
             >
               <span v-if="loading">登 陆 中...</span>
               <span v-else>登 陆</span>

@@ -91,7 +91,7 @@ const openDialog = (operate: string, row?: College) => {
   dialog.value = true
   dialogOperate.value = operate
 }
-const handlerOperate = async (formEl?: FormInstance) => {
+const handleOperate = async (formEl?: FormInstance) => {
   if (!formEl) return
   await formEl.validate(async (valid) => {
     if (valid) {
@@ -120,7 +120,7 @@ const handlerOperate = async (formEl?: FormInstance) => {
     }
   })
 }
-const handlerDelete = (id: number) => {
+const handleDelete = (id: number) => {
   deleteCollege(id).then(async ({ data }) => {
     if (data.code === 200) {
       NotificationSuccess('删除成功')
@@ -130,7 +130,7 @@ const handlerDelete = (id: number) => {
     NotificationError('删除失败，请重试!')
   })
 }
-const handlerBatchDelete = () => {
+const handleBatchDelete = () => {
   ConfirmBox('确认删除选中的数据吗?', '提示', () => {
     batchDeleteCollege(
       selection.value.map((item: College) => item.college_id) as number[]
@@ -184,7 +184,7 @@ watch(
         type="danger"
         :disabled="disabled.delete"
         :style="{ borderRadius: '5px' }"
-        @click="handlerBatchDelete"
+        @click="handleBatchDelete"
       >
         删除
       </el-button>
@@ -229,7 +229,7 @@ watch(
           </el-button>
           <el-popconfirm
             title="确定删除本条数据吗？"
-            @confirm="handlerDelete(row.college_id)"
+            @confirm="handleDelete(row.college_id)"
           >
             <template #reference>
               <el-button type="danger" :style="{ borderRadius: '5px' }">
@@ -292,7 +292,7 @@ watch(
     </el-form>
     <template #footer>
       <el-button type="danger" text @click="dialog = false">返回</el-button>
-      <el-button type="primary" @click="handlerOperate(dialogFormRef)">
+      <el-button type="primary" @click="handleOperate(dialogFormRef)">
         确认
       </el-button>
     </template>
