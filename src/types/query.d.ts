@@ -19,6 +19,10 @@ export interface QueryUser extends Page {
   real_name?: string
 }
 
-export interface QueryRole extends Page {}
+export interface QueryRole extends Page {
+  role_name?: string
+}
 
-export interface QueryMenu extends Page {}
+export interface QueryMenu extends Page {
+  menu_title?: string
+}
