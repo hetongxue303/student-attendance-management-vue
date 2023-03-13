@@ -32,3 +32,7 @@ export interface QueryMenuTree {}
 export interface QueryCourse extends Page {
   course_name?: string
 }
+
+export interface QueryCourseMe extends QueryCourse {
+  username?: string
+}

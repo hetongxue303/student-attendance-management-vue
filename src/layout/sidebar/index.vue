@@ -5,12 +5,11 @@ import MenuItem from './components/MenuItem.vue'
 import Logo from './components/logo.vue'
 import { usePermissionStore } from '../../store/modules/permission'
 import { MenuItemInfo } from '../../types/element-plus'
-import { menus } from '../data/menus'
 
 const route = useRoute()
 const permissionStore = usePermissionStore()
 withDefaults(defineProps<{ isCollapse: boolean }>(), { isCollapse: false })
-// const menus = computed((): MenuItemInfo[] => permissionStore.getMenuItem)
+const menus = computed((): MenuItemInfo[] => permissionStore.getMenuItem)
 const activeValue = computed((): string => route.path)
 </script>
 

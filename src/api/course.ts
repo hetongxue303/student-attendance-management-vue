@@ -1,9 +1,13 @@
 import axios, { base } from '../utils/request'
 import { Course } from '../types/entity'
-import { QueryCourse } from '../types/query'
+import { QueryCourse, QueryCourseMe } from '../types/query'
+import { useUserStore } from '../store/modules/user'
 
 export const getCourseListAll = () => {
   return axios({ method: 'GET', url: `${base}/course/list/all` })
+}
+export const getCourseListMe = (params: QueryCourseMe) => {
+  return axios({ method: 'GET', url: `${base}/course/list/me`, params })
 }
 export const getCourseListByPage = (params: QueryCourse) => {
   return axios({ method: 'GET', url: `${base}/course/list`, params })

@@ -89,3 +89,9 @@ export interface Course extends Base {
   time?: number
   description?: string
 }
+
+export interface MyCourse extends Course {
+  checked_in?: number // 已签到次数
+  not_checked_in?: number // 已签到次数
+  remainder?: number // 剩余次数
+}

@@ -60,10 +60,10 @@ export const useUserStore = defineStore('user', {
     systemLogout() {
       removeToken()
       removeTokenTime()
-      usePermissionStore().$reset()
-      usePermissionStore().clearRouter()
       useTabStore().$reset()
       useAppStore().$reset()
+      usePermissionStore().$reset()
+      usePermissionStore().clearRouter()
       session.clear()
       local.clear()
       this.$reset()

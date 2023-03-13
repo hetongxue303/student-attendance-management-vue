@@ -18,10 +18,10 @@ import {
   batchDeleteClasses,
   deleteClasses,
   getClassesListByPage,
-  getMajorListByCollegeID,
   updateClasses
 } from '../../../api/classes'
 import { getCollegeListAll } from '../../../api/college'
+import { getMajorListByCollegeID } from '../../../api/major'
 
 const total = ref(0)
 const loading = ref(false)
