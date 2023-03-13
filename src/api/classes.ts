@@ -9,6 +9,10 @@ export const getClassesListByPage = (params: QueryClasses) => {
   return axios({ method: 'GET', url: `${base}/classes/list`, params })
 }
 
+export const getClassesListByMajorID = (major_id: number) => {
+  return axios({ method: 'GET', url: `${base}/classes/major_id/${major_id}` })
+}
+
 export const addClasses = (data: Classes) => {
   return axios({ method: 'POST', url: `${base}/classes/add`, data })
 }

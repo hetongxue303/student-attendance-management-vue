@@ -28,3 +28,7 @@ export interface QueryMenu extends Page {
 }
 
 export interface QueryMenuTree {}
+
+export interface QueryCourse extends Page {
+  course_name?: string
+}

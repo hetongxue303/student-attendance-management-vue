@@ -75,3 +75,17 @@ export interface Menu extends Base {
 export interface MenuTree extends Menu {
   children?: MenuTree[]
 }
+
+export interface Course extends Base {
+  course_id?: number
+  course_name?: string
+  college_id?: number
+  college?: College
+  major_id?: number
+  major?: Major
+  classes_id?: number
+  classes?: Classes
+  count?: number
+  time?: number
+  description?: string
+}
