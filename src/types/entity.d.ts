@@ -100,11 +100,23 @@ export interface MyCourse extends Course {
   remainder?: number // 剩余次数
 }
 
+export interface Attendance extends Base {
+  attendance_id?: number
+  user_id?: number
+  user?: User
+  course_id?: number
+  course?: Course
+  attendance_time?: Date
+  time?: number
+}
+
 export interface Check extends Base {
   check_id?: number
   user_id?: number
   user?: User
   course_id?: number
   course?: Course
+  attendance_id?: number
+  attendance?: Attendance
   check_time?: Date
 }
