@@ -63,6 +63,7 @@ module.exports = {
     '@typescript-eslint/no-empty-interface': 0,
     'vue/multi-word-component-names': 0,
     'vue/require-component-is': 0,
+    'consistent-return': 0,
     'no-param-reassign': 0,
     'no-unused-vars': 0,
     'no-return-assign': 0,

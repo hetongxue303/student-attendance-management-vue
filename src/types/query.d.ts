@@ -36,3 +36,6 @@ export interface QueryCourse extends Page {
 export interface QueryCourseMe extends QueryCourse {
   username?: string
 }
+export interface QueryCheck extends Page {
+  real_name?: string
+}

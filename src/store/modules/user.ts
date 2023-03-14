@@ -23,7 +23,8 @@ export const useUserStore = defineStore('user', {
       roles: [],
       isAdmin: false,
       realName: '',
-      gender: 0
+      gender: 0,
+      user_id: undefined
     }
   },
   getters: {
@@ -34,6 +35,7 @@ export const useUserStore = defineStore('user', {
     getAvatar: (state) => state.avatar,
     getIsAdmin: (state) => state.isAdmin,
     getRealName: (state) => state.realName,
+    getUserId: (state) => state.user_id,
     getGender: (state) => state.gender
   },
   actions: {
@@ -49,6 +51,7 @@ export const useUserStore = defineStore('user', {
       this.gender = user.gender
       this.roles = user.roles
       this.avatar = user.avatar
+      this.user_id = user.user_id
       setToken(token)
       setTokenTime(new Date().getTime() + expire_time)
       permissionStore.permission = user.permission

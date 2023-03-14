@@ -1,14 +1,19 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref, watch } from 'vue'
-import { FormInstance, ElMessage, ElNotification } from 'element-plus'
+import { FormInstance } from 'element-plus'
 import { useUserStore } from '../store/modules/user'
 import { useRoute, useRouter } from 'vue-router'
 import { getCaptcha, login } from '../api/security'
 import { decrypt, encrypt } from '../utils/jsencrypt'
 import { encryptPasswordToMD5 } from '../hook/encrypt'
-import { DURATION_TIME } from '../settings'
 import { useCookies } from '@vueuse/integrations/useCookies'
 import { ILogin } from '../types/entity'
+import { COOKIE_EXPIRE_TIME } from '../settings'
+import {
+  MessageError,
+  MessageWarning,
+  NotificationSuccess
+} from '../utils/element-plus'
 
 const route = useRoute()
 const router = useRouter()
@@ -24,36 +29,28 @@ const loginFrom: ILogin = reactive({
   code: '',
   rememberMe: false
 })
-
-enum userinfo {
-  username = 'username',
-  password = 'password',
-  rememberMe = 'rememberMe'
-}
-
-const refreshCaptcha = () => {
+const refreshCaptcha = () =>
   getCaptcha().then(({ data }) => (imgUrl.value = data.content))
-}
 const getCookie = () => {
-  loginFrom.username = cookie.get(userinfo.username)
-  loginFrom.password = cookie.get(userinfo.password)
-    ? decrypt(cookie.get(userinfo.password))
+  loginFrom.username = cookie.get('username')
+  loginFrom.password = cookie.get('password')
+    ? decrypt(cookie.get('password'))
     : ''
-  loginFrom.rememberMe = Boolean(cookie.get(userinfo.rememberMe))
+  loginFrom.rememberMe = Boolean(cookie.get('rememberMe'))
 }
 const handleRememberMe = (status: boolean) => {
   if (status) {
-    const expires: Date = new Date(new Date().getTime() + 60 * 60 * 1000)
-    cookie.remove(userinfo.username)
-    cookie.remove(userinfo.password)
-    cookie.remove(userinfo.rememberMe)
-    cookie.set(userinfo.username, loginFrom.username, { expires })
-    cookie.set(userinfo.password, encrypt(loginFrom.password), { expires })
-    cookie.set(userinfo.rememberMe, loginFrom.rememberMe, { expires })
+    const expires: Date = new Date(new Date().getTime() + COOKIE_EXPIRE_TIME)
+    cookie.remove('username')
+    cookie.remove('password')
+    cookie.remove('rememberMe')
+    cookie.set('username', loginFrom.username, { expires })
+    cookie.set('password', encrypt(loginFrom.password), { expires })
+    cookie.set('rememberMe', loginFrom.rememberMe, { expires })
   } else {
-    cookie.remove(userinfo.username)
-    cookie.remove(userinfo.password)
-    cookie.remove(userinfo.rememberMe)
+    cookie.remove('username')
+    cookie.remove('password')
+    cookie.remove('rememberMe')
   }
 }
 const handleLogin = async (formEl?: FormInstance) => {
@@ -71,27 +68,18 @@ const handleLogin = async (formEl?: FormInstance) => {
         .then(({ data, status }) => {
           if (data.code === 200 && status === 200) {
             userStore.setUserInfo(data)
-            ElNotification.success({
-              message: '登陆成功',
-              duration: DURATION_TIME
-            })
+            NotificationSuccess('登陆成功')
             router.push(redirect.value || '/')
           } else {
             loginFrom.code = ''
             refreshCaptcha()
-            ElMessage.warning({
-              message: data.message || '登陆失败，请重试！',
-              duration: DURATION_TIME
-            })
+            MessageWarning(data.message || '登陆失败，请重试！')
           }
         })
         .catch(({ response }) => {
           loginFrom.code = ''
           refreshCaptcha()
-          ElMessage.error({
-            message: response.data.message,
-            duration: DURATION_TIME
-          })
+          MessageError(response.data.message)
         })
         .finally(() => (loading.value = false))
     }
@@ -102,13 +90,11 @@ watch(
   () => (loginFrom.code = ''),
   { deep: true }
 )
-
 watch(
   () => route,
   () => (redirect.value = route.query && (route.query.redirect as string)),
   { deep: true, immediate: true }
 )
-
 onMounted(() => {
   refreshCaptcha()
   getCookie()

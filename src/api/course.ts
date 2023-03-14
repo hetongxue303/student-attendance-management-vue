@@ -1,7 +1,6 @@
 import axios, { base } from '../utils/request'
-import { Course } from '../types/entity'
+import { BOCourse } from '../types/entity'
 import { QueryCourse, QueryCourseMe } from '../types/query'
-import { useUserStore } from '../store/modules/user'
 
 export const getCourseListAll = () => {
   return axios({ method: 'GET', url: `${base}/course/list/all` })
@@ -13,7 +12,7 @@ export const getCourseListByPage = (params: QueryCourse) => {
   return axios({ method: 'GET', url: `${base}/course/list`, params })
 }
 
-export const addCourse = (data: Course) => {
+export const addCourse = (data: BOCourse) => {
   return axios({ method: 'POST', url: `${base}/course/add`, data })
 }
 
@@ -24,6 +23,6 @@ export const deleteCourse = (id: number) => {
 export const batchDeleteCourse = (data: number[]) => {
   return axios({ method: 'PUT', url: `${base}/course/delete/batch`, data })
 }
-export const updateCourse = (data: Course) => {
+export const updateCourse = (data: BOCourse) => {
   return axios({ method: 'PUT', url: `${base}/course/update`, data })
 }

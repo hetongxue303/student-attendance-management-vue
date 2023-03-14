@@ -11,7 +11,14 @@ import {
   NotificationError,
   NotificationSuccess
 } from '../../../utils/element-plus'
-import { Classes, College, Course, Major } from '../../../types/entity'
+import {
+  Classes,
+  College,
+  Course,
+  Major,
+  User,
+  BOCourse
+} from '../../../types/entity'
 import { QueryCourse } from '../../../types/query'
 import {
   addCourse,
@@ -23,6 +30,8 @@ import {
 import { getCollegeListAll } from '../../../api/college'
 import { getMajorListByCollegeID } from '../../../api/major'
 import { getClassesListByMajorID } from '../../../api/classes'
+import { getTeacherListAll } from '../../../api/user'
+import { useUserStore } from '../../../store/modules/user'
 
 const total = ref(0)
 const loading = ref(false)
@@ -77,12 +86,19 @@ onMounted(() => initTableData())
 
 const dialog = ref(false)
 const dialogTitle = ref('')
-const dialogForm = ref<Course>({ count: 1, time: 1 })
+const dialogForm = ref<BOCourse>({ count: 1, time: 1 })
 const dialogFormRef = ref<FormInstance>()
 const dialogOperate = ref<string>('')
 const collegeList = ref<College[]>([])
 const majorList = ref<Major[]>([])
 const classesList = ref<Classes[]>([])
+const teacherList = ref<User[]>([])
+const initTeacherList = () => {
+  if (!useUserStore().getRoles.includes('student'))
+    getTeacherListAll().then(
+      ({ data }) => (teacherList.value = cloneDeep(data.content))
+    )
+}
 const initCollegeData = () => {
   getCollegeListAll().then(
     ({ data }) => (collegeList.value = cloneDeep(data.content))
@@ -110,6 +126,7 @@ const openDialog = (operate: string, row?: Course) => {
     }
   }
   initCollegeData()
+  if (useUserStore().getIsAdmin) initTeacherList()
   dialog.value = true
   dialogOperate.value = operate
 }
@@ -117,6 +134,8 @@ const handleOperate = async (formEl?: FormInstance) => {
   if (!formEl) return
   await formEl.validate(async (valid) => {
     if (valid) {
+      if (!useUserStore().getIsAdmin)
+        dialogForm.value.user_id = useUserStore().getUserId
       const { value } = dialogForm
       if (dialogOperate.value === 'add') {
         addCourse(value).then(({ data }) => {
@@ -415,6 +434,25 @@ watch(
             :key="item.classes_id"
             :label="item.classes_name"
             :value="item.classes_id"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item
+        v-show="useUserStore().getIsAdmin"
+        prop="user_id"
+        label="任课教师"
+        :rules="{ required: true, message: '请选择教师', trigger: 'blur' }"
+      >
+        <el-select
+          v-model="dialogForm.user_id"
+          placeholder="请选择"
+          :style="{ width: '100%' }"
+        >
+          <el-option
+            v-for="item in teacherList"
+            :key="item.user_id"
+            :label="item.real_name"
+            :value="item.user_id"
           />
         </el-select>
       </el-form-item>

@@ -7,6 +7,7 @@ interface AppType {
 }
 
 interface UserType {
+  user_id?: number
   authorization: string
   username: string
   realName: string

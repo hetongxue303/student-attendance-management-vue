@@ -90,8 +90,21 @@ export interface Course extends Base {
   description?: string
 }
 
+export interface BOCourse extends Course {
+  user_id?: number
+}
+
 export interface MyCourse extends Course {
   checked_in?: number // 已签到次数
   not_checked_in?: number // 已签到次数
   remainder?: number // 剩余次数
+}
+
+export interface Check extends Base {
+  check_id?: number
+  user_id?: number
+  user?: User
+  course_id?: number
+  course?: Course
+  check_time?: Date
 }
