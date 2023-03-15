@@ -2,6 +2,7 @@ import axios, { base } from '../utils/request'
 import { QueryUser } from '../types/query'
 import { User } from '../types/entity'
 import { useUserStore } from '../store/modules/user'
+import { MessageWarning } from '../utils/element-plus'
 
 export const getUserListAll = () => {
   return axios({ method: 'GET', url: `${base}/user/list/all` })

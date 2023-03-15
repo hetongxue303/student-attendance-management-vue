@@ -67,7 +67,10 @@ const handlePublish = async (formEl?: FormInstance) => {
   if (!formEl) return
   await formEl.validate(async (valid) => {
     if (valid) {
-      if (!useUserStore().getRoles.includes('student'))
+      if (
+        useUserStore().getRoles.includes('admin') ||
+        useUserStore().getRoles.includes('teacher')
+      )
         publishForm.value.user_id = useUserStore().getUserId
       const { value } = publishForm
       addAttendance(value).then(({ data }) => {

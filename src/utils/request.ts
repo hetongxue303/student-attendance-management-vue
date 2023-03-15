@@ -7,7 +7,6 @@ import { ElMessage, ElNotification } from 'element-plus'
 import { getToken } from './auth'
 import NProgress from '../plugins/nProgress'
 import { useUserStore } from '../store/modules/user'
-import { useRouter } from 'vue-router'
 
 export const base: string = import.meta.env.VITE_BASIC_API
 

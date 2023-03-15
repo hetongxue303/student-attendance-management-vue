@@ -17,6 +17,7 @@ export interface QueryClasses extends Page {
 
 export interface QueryUser extends Page {
   real_name?: string
+  username?: string
 }
 
 export interface QueryRole extends Page {
@@ -36,7 +37,9 @@ export interface QueryCourse extends Page {
 export interface QueryCourseMe extends QueryCourse {
   username?: string
 }
+
 export interface QueryCheck extends Page {
   real_name?: string
 }
+
 export interface QueryAttendance extends Page {}
