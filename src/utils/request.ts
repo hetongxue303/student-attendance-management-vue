@@ -5,7 +5,6 @@ import axios, {
 } from 'axios'
 import { ElMessage, ElNotification } from 'element-plus'
 import { getToken } from './auth'
-import NProgress from '../plugins/nProgress'
 import { useUserStore } from '../store/modules/user'
 
 export const base: string = import.meta.env.VITE_BASIC_API
@@ -21,7 +20,6 @@ axios.create({
 })
 axios.interceptors.request.use(
   async (config: InternalAxiosRequestConfig) => {
-    NProgress.start()
     if (getToken() && config.headers) {
       // TODO 判断token是否快要过期
       config.headers.authorization = getToken()
@@ -36,7 +34,6 @@ axios.interceptors.request.use(
 
 axios.interceptors.response.use(
   async (response: AxiosResponse) => {
-    NProgress.done()
     return response
   },
   async (error: AxiosError) => {

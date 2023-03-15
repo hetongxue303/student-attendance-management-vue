@@ -6,6 +6,7 @@ import { delayRequest } from '../../../utils/common'
 import { clone, cloneDeep } from 'lodash'
 import {
   ConfirmBox,
+  MessageWarning,
   NotificationError,
   NotificationSuccess
 } from '../../../utils/element-plus'
@@ -18,6 +19,7 @@ import {
   getRoleListByPage,
   updateRole
 } from '../../../api/role'
+import { useUserStore } from '../../../store/modules/user'
 
 const total = ref(0)
 const loading = ref(false)
@@ -91,7 +93,7 @@ onMounted(() => initTableData())
 
 const dialog = ref(false)
 const dialogTitle = ref('')
-const dialogForm = ref<Role>({})
+const dialogForm = ref<Role>({ is_status: false })
 const dialogFormRef = ref<FormInstance>()
 const dialogOperate = ref<string>('')
 const openDialog = (operate: string, row?: Role) => {
@@ -114,44 +116,36 @@ const handleOperate = async (formEl?: FormInstance) => {
     if (valid) {
       const { value } = dialogForm
       if (dialogOperate.value === 'add') {
-        addRole(value).then(({ data }) => {
-          if (data.code === 200) {
-            NotificationSuccess('添加成功')
-            dialog.value = false
-            initTableData()
-            return
-          }
-          NotificationError('添加失败，请重试!')
-        })
+        addRole(value)
+          .then(({ data }) => {
+            if (data.code === 200) {
+              NotificationSuccess('添加成功')
+              dialog.value = false
+              initTableData()
+              return
+            }
+            NotificationError('添加失败，请重试!')
+          })
+          .catch(({ response }) => MessageWarning(response.data.message))
       } else {
-        updateRole(value).then(({ data }) => {
-          if (data.code === 200) {
-            NotificationSuccess('修改成功')
-            dialog.value = false
-            initTableData()
-            return
-          }
-          NotificationError('修改失败，请重试!')
-        })
+        updateRole(value)
+          .then(({ data }) => {
+            if (data.code === 200) {
+              NotificationSuccess('修改成功')
+              dialog.value = false
+              initTableData()
+              return
+            }
+            NotificationError('修改失败，请重试!')
+          })
+          .catch(({ response }) => MessageWarning(response.data.message))
       }
     }
   })
 }
 const handleDelete = (id: number) => {
-  deleteRole(id).then(async ({ data }) => {
-    if (data.code === 200) {
-      NotificationSuccess('删除成功')
-      initTableData()
-      return
-    }
-    NotificationError('删除失败，请重试!')
-  })
-}
-const handleBatchDelete = () => {
-  ConfirmBox('确认删除选中的数据吗?', '提示', () => {
-    batchDeleteRole(
-      selection.value.map((item: Role) => item.role_id) as number[]
-    ).then(({ data }) => {
+  deleteRole(id)
+    .then(async ({ data }) => {
       if (data.code === 200) {
         NotificationSuccess('删除成功')
         initTableData()
@@ -159,13 +153,29 @@ const handleBatchDelete = () => {
       }
       NotificationError('删除失败，请重试!')
     })
+    .catch(({ response }) => MessageWarning(response.data.message))
+}
+const handleBatchDelete = () => {
+  ConfirmBox('确认删除选中的数据吗?', '提示', () => {
+    batchDeleteRole(
+      selection.value.map((item: Role) => item.role_id) as number[]
+    )
+      .then(({ data }) => {
+        if (data.code === 200) {
+          NotificationSuccess('删除成功')
+          initTableData()
+          return
+        }
+        NotificationError('删除失败，请重试!')
+      })
+      .catch(({ response }) => MessageWarning(response.data.message))
   })
 }
 watch(
   () => dialog.value,
   (value) => {
     if (!value) {
-      dialogForm.value = {}
+      dialogForm.value = { is_status: false }
       dialogOperate.value = ''
     }
   },
@@ -229,6 +239,7 @@ watch(
         <template #default="{ row }">
           <el-switch
             v-model="row.is_status"
+            :disabled="useUserStore().getRoles.includes(row.role_code)"
             style="
               --el-switch-on-color: #13ce66;
               --el-switch-off-color: #ff4949;
@@ -255,10 +266,14 @@ watch(
           </el-button>
           <el-popconfirm
             title="确定删除本条数据吗？"
-            @confirm="handleDelete(row.college_id)"
+            @confirm="handleDelete(row.role_id)"
           >
             <template #reference>
-              <el-button type="danger" :style="{ borderRadius: '5px' }">
+              <el-button
+                :disabled="useUserStore().getRoles.includes(row.role_code)"
+                type="danger"
+                :style="{ borderRadius: '5px' }"
+              >
                 删除
               </el-button>
             </template>
@@ -284,10 +299,10 @@ watch(
     :close-on-click-modal="false"
     :style="{ borderRadius: '10px' }"
   >
-    <el-form ref="dialogFormRef" :model="dialogForm" label-width="80">
+    <el-form ref="dialogFormRef" :model="dialogForm" label-width="50">
       <el-form-item
         prop="role_name"
-        label="角色名称"
+        label="名称"
         :rules="{
           required: true,
           message: '请输入角色名称',
@@ -295,6 +310,41 @@ watch(
         }"
       >
         <el-input v-model="dialogForm.role_name" placeholder="角色名称" />
+      </el-form-item>
+      <el-form-item
+        prop="role_name"
+        label="标识"
+        :rules="{
+          required: true,
+          message: '请输入角色标识',
+          trigger: 'blur'
+        }"
+      >
+        <el-input v-model="dialogForm.role_code" placeholder="角色标识" />
+      </el-form-item>
+      <el-form-item
+        v-show="dialogOperate === 'add'"
+        prop="is_status"
+        label="状态"
+        :rules="{
+          required: true,
+          message: '请选择状态',
+          trigger: 'blur'
+        }"
+      >
+        <el-radio-group v-model="dialogForm.is_status">
+          <el-radio-button :label="true">启用</el-radio-button>
+          <el-radio-button :label="false">禁用</el-radio-button>
+        </el-radio-group>
+      </el-form-item>
+      <el-form-item label="描述">
+        <el-input
+          v-model="dialogForm.description"
+          type="textarea"
+          resize="none"
+          :rows="3"
+          placeholder="描述(默认：无)"
+        />
       </el-form-item>
     </el-form>
     <template #footer>

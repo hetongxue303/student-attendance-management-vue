@@ -268,8 +268,7 @@ watch(
       @selection-change="handleSelectionChange"
     >
       <el-table-column type="selection" width="30" align="center" />
-      <el-table-column prop="course_id" label="ID" width="50" />
-      <el-table-column prop="course_name" label="名称" align="center" />
+      <el-table-column prop="course_name" label="名称" />
       <el-table-column prop="count" label="人数" align="center">
         <template #default="{ row }">
           <el-tag type="success" disable-transitions>
