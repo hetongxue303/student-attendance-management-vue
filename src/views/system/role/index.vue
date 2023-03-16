@@ -8,8 +8,7 @@ import {
   ConfirmBox,
   MessageWarning,
   NotificationError,
-  NotificationSuccess,
-  NotificationWarning
+  NotificationSuccess
 } from '../../../utils/element-plus'
 import { Menu, Role } from '../../../types/entity'
 import { QueryRole } from '../../../types/query'

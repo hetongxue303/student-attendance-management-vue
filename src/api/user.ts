@@ -1,6 +1,6 @@
 import axios, { base } from '../utils/request'
 import { QueryUser } from '../types/query'
-import { User } from '../types/entity'
+import { BOUser, User } from '../types/entity'
 import { useUserStore } from '../store/modules/user'
 import { MessageWarning } from '../utils/element-plus'
 
@@ -18,7 +18,7 @@ export const getUserListByPage = (params: QueryUser) => {
   return axios({ method: 'GET', url: `${base}/user/list`, params })
 }
 
-export const addUser = (data: User) => {
+export const addUser = (data: BOUser) => {
   return axios({ method: 'POST', url: `${base}/user/add`, data })
 }
 
@@ -29,6 +29,6 @@ export const deleteUser = (id: number) => {
 export const batchDeleteUser = (data: number[]) => {
   return axios({ method: 'PUT', url: `${base}/user/delete/batch`, data })
 }
-export const updateUser = (data: User) => {
+export const updateUser = (data: BOUser) => {
   return axios({ method: 'PUT', url: `${base}/user/update`, data })
 }

@@ -310,16 +310,6 @@ watch(
           placeholder="专业描述(默认：无)"
         />
       </el-form-item>
-      <el-form-item v-show="dialogOperate === 'update'" label="创建时间">
-        <span :style="{ color: '#7a8b9a', fontSize: '13px' }">
-          {{ moment(dialogForm.create_time).format(DATE_TIME_FORMAT) }}
-        </span>
-      </el-form-item>
-      <el-form-item v-show="dialogOperate === 'update'" label="更新时间">
-        <span :style="{ color: '#7a8b9a', fontSize: '13px' }">
-          {{ moment(dialogForm.update_time).format(DATE_TIME_FORMAT) }}
-        </span>
-      </el-form-item>
     </el-form>
     <template #footer>
       <el-button type="danger" text @click="dialog = false">返回</el-button>

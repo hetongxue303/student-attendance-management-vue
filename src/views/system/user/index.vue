@@ -13,7 +13,7 @@ import {
   NotificationSuccess
 } from '../../../utils/element-plus'
 import { QueryUser } from '../../../types/query'
-import { User } from '../../../types/entity'
+import { BOUser, Role, User } from '../../../types/entity'
 import {
   addUser,
   batchDeleteUser,
@@ -23,6 +23,7 @@ import {
 } from '../../../api/user'
 import { encryptPasswordToMD5 } from '../../../hook/encrypt'
 import { useUserStore } from '../../../store/modules/user'
+import { getRoleListAll } from '../../../api/role'
 
 const total = ref(0)
 const loading = ref(false)
@@ -107,10 +108,15 @@ onMounted(() => initTableData())
 
 const dialog = ref(false)
 const dialogTitle = ref('')
-const dialogForm = ref<User>({ gender: 1, is_status: false })
+const dialogForm = ref<BOUser>({ gender: 1, is_status: false })
 const dialogFormRef = ref<FormInstance>()
 const dialogOperate = ref('')
-const dialogType = ref('admin')
+const roleListAll = ref<Role[]>([])
+const getRoleList = () => {
+  getRoleListAll().then(
+    ({ data }) => (roleListAll.value = cloneDeep(data.content))
+  )
+}
 const openDialog = (operate: string, row?: User) => {
   if (operate === 'add') {
     dialogTitle.value = '新增'
@@ -122,6 +128,7 @@ const openDialog = (operate: string, row?: User) => {
       dialogForm.value = cloneDeep(selection.value[0] as User)
     }
   }
+  getRoleList()
   dialog.value = true
   dialogOperate.value = operate
 }
@@ -192,7 +199,6 @@ watch(
     if (!value) {
       dialogForm.value = { gender: 1, is_status: false }
       dialogOperate.value = ''
-      dialogType.value = 'admin'
     }
   },
   { deep: true }
@@ -333,15 +339,7 @@ watch(
     :style="{ borderRadius: '10px' }"
   >
     <el-form ref="dialogFormRef" :model="dialogForm" label-width="50">
-      <el-form-item v-show="dialogOperate === 'add'" label="类型">
-        <el-radio-group v-model="dialogType">
-          <el-radio-button label="admin">管理员</el-radio-button>
-          <el-radio-button label="teacher">教师</el-radio-button>
-          <el-radio-button label="student">学生</el-radio-button>
-        </el-radio-group>
-      </el-form-item>
       <el-form-item
-        v-show="dialogType === 'admin' || dialogOperate === 'update'"
         prop="username"
         label="账号"
         :rules="{
@@ -356,30 +354,6 @@ watch(
           placeholder="账号"
         />
       </el-form-item>
-      <el-form-item
-        v-show="dialogType === 'teacher'"
-        prop="username"
-        label="工号"
-        :rules="{
-          required: true,
-          message: '请输入工号',
-          trigger: 'blur'
-        }"
-      >
-        <el-input v-model="dialogForm.username" placeholder="工号" />
-      </el-form-item>
-      <el-form-item
-        v-show="dialogType === 'student'"
-        prop="username"
-        label="学号"
-        :rules="{
-          required: true,
-          message: '请输入学号',
-          trigger: 'blur'
-        }"
-      >
-        <el-input v-model="dialogForm.username" placeholder="学号" />
-      </el-form-item>
       <el-form-item v-show="dialogOperate === 'add'" label="密码">
         <el-input v-model="dialogForm.password" placeholder="默认：123456" />
       </el-form-item>
@@ -392,11 +366,29 @@ watch(
           trigger: 'blur'
         }"
       >
-        <el-input
-          v-model="dialogForm.real_name"
-          :style="{ width: '50%' }"
-          placeholder="姓名"
-        />
+        <el-input v-model="dialogForm.real_name" placeholder="姓名" />
+      </el-form-item>
+      <el-form-item
+        prop="role_id"
+        label="角色"
+        :rules="{
+          required: true,
+          message: '请选择角色',
+          trigger: 'blur'
+        }"
+      >
+        <el-select
+          v-model="dialogForm.role_id"
+          placeholder="角色"
+          :style="{ width: '100%' }"
+        >
+          <el-option
+            v-for="item in roleListAll"
+            :key="item.role_id"
+            :label="item.role_name"
+            :value="item.role_id"
+          />
+        </el-select>
       </el-form-item>
       <el-row :gutter="10">
         <el-col :span="12">

@@ -46,6 +46,10 @@ export interface User extends Base {
   classes?: Classes
 }
 
+export interface BOUser extends User {
+  role_id?: number
+}
+
 export interface Role extends Base {
   role_id?: number
   role_name?: string

@@ -4,25 +4,26 @@ import { useCookies } from '@vueuse/integrations/useCookies'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '../../../store/modules/user'
 import { logout } from '../../../api/security'
+import { MessageError, MessageSuccess } from '../../../utils/element-plus'
 
 const userStore = useUserStore()
 const cookie = useCookies()
 const router = useRouter()
-const handlerLogout = async () => {
+const handlerLogout = () => {
   ElMessageBox.confirm('您确认退出系统吗？', '提示', {
     confirmButtonText: '确定',
     cancelButtonText: '取消',
     type: 'warning'
-  }).then(async () => {
+  }).then(() => {
     logout().then(({ data }) => {
       switch (data.code) {
         case 200:
           userStore.systemLogout()
           router.replace('/login')
-          ElMessage.success('注销成功')
+          MessageSuccess('注销成功')
           break
         default:
-          ElMessage.error(data.message || '注销失败，请重试！')
+          MessageError(data.message || '注销失败，请重试！')
       }
     })
   })
