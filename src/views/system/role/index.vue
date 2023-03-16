@@ -1,25 +1,33 @@
 <script setup lang="ts">
 import Pagination from '@components/pagination/index.vue'
 import { onMounted, reactive, ref, watch } from 'vue'
-import { ElTable, FormInstance } from 'element-plus'
+import { ElTable, ElTree, FormInstance } from 'element-plus'
 import { delayRequest } from '../../../utils/common'
 import { clone, cloneDeep } from 'lodash'
 import {
   ConfirmBox,
   MessageWarning,
   NotificationError,
-  NotificationSuccess
+  NotificationSuccess,
+  NotificationWarning
 } from '../../../utils/element-plus'
-import { Role } from '../../../types/entity'
+import { Menu, Role } from '../../../types/entity'
 import { QueryRole } from '../../../types/query'
 import {
   addRole,
   batchDeleteRole,
   deleteRole,
   getRoleListByPage,
-  updateRole
+  updateRole,
+  updateRoleStatus
 } from '../../../api/role'
 import { useUserStore } from '../../../store/modules/user'
+import { filterMenuKey, filterMenuTree, Tree } from '../../../filter/menu'
+import {
+  getMenuListAll,
+  getMenuListByTree,
+  getMenuTreeListByRoleId
+} from '../../../api/menu'
 
 const total = ref(0)
 const loading = ref(false)
@@ -58,21 +66,21 @@ const initTableData = () => {
     500
   )
 }
-const handleSwitchChange = (user: Role) => {
+const handleSwitchChange = (role: Role) => {
   switchLoading.value = true
   ConfirmBox(
-    `确定${user.is_status ? '启用' : '禁用'} ${user.role_name} 吗?`,
+    `确定${role.is_status ? '启用' : '禁用'} ${role.role_name} 吗?`,
     '提示',
     () => {
-      updateRole(user).then(({ data }) => {
+      updateRoleStatus(role).then(({ data }) => {
         if (data.code === 200) {
-          NotificationSuccess(`${user.is_status ? '启用' : '禁用'}成功`)
+          NotificationSuccess(`${role.is_status ? '启用' : '禁用'}成功`)
           return
         }
-        NotificationError(`${user.is_status ? '启用' : '禁用'}失败,请重试!`)
+        NotificationError(`${role.is_status ? '启用' : '禁用'}失败,请重试!`)
       })
     },
-    () => (user.is_status = !user.is_status),
+    () => (role.is_status = !role.is_status),
     () => (switchLoading.value = false)
   )
 }
@@ -91,6 +99,38 @@ watch(
 )
 onMounted(() => initTableData())
 
+const menuTree = ref<Tree[]>([])
+const treeRef = ref<InstanceType<typeof ElTree>>()
+const roleMenuTreeList = ref<Menu[]>([])
+const menuListAll = ref<Menu[]>([])
+const checkedMenuKeys = ref<number[]>([])
+const getMenuTree = () => {
+  getMenuListByTree().then(
+    ({ data }) =>
+      (menuTree.value =
+        data.code === 200 ? filterMenuTree(data.content, 0) : [])
+  )
+}
+const getMyMenuTree = (role_id: number) => {
+  roleMenuTreeList.value = []
+  checkedMenuKeys.value = []
+  getMenuTreeListByRoleId(role_id).then(({ data }) => {
+    if (data.code === 200) {
+      roleMenuTreeList.value = cloneDeep(data.content)
+      checkedMenuKeys.value = filterMenuKey(roleMenuTreeList.value)
+    }
+  })
+}
+const getMenuList = () => {
+  getMenuListAll().then(({ data }) => {
+    menuListAll.value = data.code === 200 ? cloneDeep(data.content) : []
+  })
+}
+onMounted(() => {
+  getMenuTree()
+  getMenuList()
+})
+
 const dialog = ref(false)
 const dialogTitle = ref('')
 const dialogForm = ref<Role>({ is_status: false })
@@ -101,11 +141,8 @@ const openDialog = (operate: string, row?: Role) => {
     dialogTitle.value = '新增'
   } else {
     dialogTitle.value = '编辑'
-    if (row) {
-      dialogForm.value = cloneDeep(row)
-    } else {
-      dialogForm.value = cloneDeep(selection.value[0] as Role)
-    }
+    getMyMenuTree(row?.role_id as number)
+    dialogForm.value = row ? cloneDeep(row) : cloneDeep(selection.value[0])
   }
   dialog.value = true
   dialogOperate.value = operate
@@ -115,8 +152,11 @@ const handleOperate = async (formEl?: FormInstance) => {
   await formEl.validate(async (valid) => {
     if (valid) {
       const { value } = dialogForm
+      const ids = (treeRef.value?.getCheckedKeys() as number[]).concat(
+        treeRef.value?.getHalfCheckedKeys() as number[]
+      )
       if (dialogOperate.value === 'add') {
-        addRole(value)
+        addRole({ role: value, menu_ids: ids })
           .then(({ data }) => {
             if (data.code === 200) {
               NotificationSuccess('添加成功')
@@ -128,7 +168,7 @@ const handleOperate = async (formEl?: FormInstance) => {
           })
           .catch(({ response }) => MessageWarning(response.data.message))
       } else {
-        updateRole(value)
+        updateRole({ role: value, menu_ids: ids })
           .then(({ data }) => {
             if (data.code === 200) {
               NotificationSuccess('修改成功')
@@ -336,6 +376,20 @@ watch(
           <el-radio-button :label="true">启用</el-radio-button>
           <el-radio-button :label="false">禁用</el-radio-button>
         </el-radio-group>
+      </el-form-item>
+      <el-form-item label="权限" :rules="{ required: true, trigger: 'blur' }">
+        <el-tree
+          ref="treeRef"
+          :data="menuTree"
+          node-key="id"
+          :default-checked-keys="checkedMenuKeys"
+          highlight-current
+          show-checkbox
+          :props="{
+            label: 'label',
+            children: 'children'
+          }"
+        />
       </el-form-item>
       <el-form-item label="描述">
         <el-input

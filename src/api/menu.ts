@@ -11,6 +11,9 @@ export const getMenuListByPage = (params: QueryMenu) => {
 export const getMenuListByTree = (params?: QueryMenuTree) => {
   return axios({ method: 'GET', url: `${base}/menu/list/tree`, params })
 }
+export const getMenuTreeListByRoleId = (role_id: number) => {
+  return axios({ method: 'GET', url: `${base}/menu/role_id/${role_id}` })
+}
 
 export const addMenu = (data: Menu) => {
   return axios({ method: 'POST', url: `${base}/menu/add`, data })

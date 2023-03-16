@@ -54,6 +54,11 @@ export interface Role extends Base {
   description?: string
 }
 
+export interface BORole {
+  role?: Role
+  menu_ids?: number[]
+}
+
 export interface Menu extends Base {
   menu_id?: number
   parent_id?: number
