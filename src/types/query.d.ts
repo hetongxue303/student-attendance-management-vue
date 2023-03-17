@@ -43,3 +43,5 @@ export interface QueryCheck extends Page {
 }
 
 export interface QueryAttendance extends Page {}
+
+export interface QueryChoice extends Page {}

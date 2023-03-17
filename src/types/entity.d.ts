@@ -95,6 +95,7 @@ export interface Course extends Base {
   classes_id?: number
   classes?: Classes
   count?: number
+  selection?: number
   time?: number
   description?: string
 }
@@ -128,4 +129,13 @@ export interface Check extends Base {
   attendance_id?: number
   attendance?: Attendance
   check_time?: Date
+}
+
+export interface Choice extends Base {
+  choice_id?: number
+  user_id?: number
+  user?: User
+  course_id?: number
+  course?: Course
+  choice_status?: number
 }

@@ -32,6 +32,7 @@ import { getMajorListByCollegeID } from '../../../api/major'
 import { getClassesListByMajorID } from '../../../api/classes'
 import { getTeacherListAll } from '../../../api/user'
 import { useUserStore } from '../../../store/modules/user'
+import { addChoice } from '../../../api/choice'
 
 const total = ref(0)
 const loading = ref(false)
@@ -191,6 +192,19 @@ const handleChangeCollege = () => {
   majorList.value = []
   classesList.value = []
 }
+const handleChoice = (row: Course) => {
+  ConfirmBox(`确定选择《${row.course_name}》吗?`, '提示', () => {
+    addChoice({ course_id: row.course_id })
+      .then(({ data }) => {
+        if (data.code === 200) {
+          NotificationSuccess('选课成功')
+          return
+        }
+        NotificationError('选课失败,请重试!')
+      })
+      .catch(({ response }) => NotificationError(response.data.message))
+  })
+}
 watch(
   () => dialogForm.value.college_id,
   (value) => {
@@ -294,6 +308,13 @@ watch(
       />
       <el-table-column label="操作" align="center" width="180">
         <template #default="{ row }">
+          <el-button
+            type="success"
+            :style="{ borderRadius: '5px' }"
+            @click="handleChoice(row)"
+          >
+            选课
+          </el-button>
           <el-button
             type="primary"
             :style="{ borderRadius: '5px' }"

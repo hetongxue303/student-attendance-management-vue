@@ -13,21 +13,13 @@ const total = ref(0)
 const loading = ref(false)
 const tableData = ref<MyCourse[]>()
 const tableRef = ref<InstanceType<typeof ElTable>>()
-const selection = ref<MyCourse[]>([])
 const query: QueryCourseMe = reactive({
   page: 1,
   size: 5,
   username: useUserStore().getUsername
 })
-const disabled = reactive({
-  add: false,
-  update: true,
-  delete: true,
-  export: true
-})
 const handleCurrent = (page: number) => (query.page = page)
 const handleSize = (size: number) => (query.size = size)
-const handleSelectionChange = (data: MyCourse[]) => (selection.value = data)
 const reset = () => {
   query.course_name = undefined
 }
@@ -54,18 +46,32 @@ watch(
   () => initTableData(),
   { deep: true }
 )
-watch(
-  () => selection.value,
-  () => {
-    disabled.update = selection.value.length !== 1
-    disabled.delete = selection.value.length < 1
-  },
-  { immediate: true, deep: true }
-)
 onMounted(() => initTableData())
+
+const detailDialog = ref(false)
+const openDetailDialog = (row: MyCourse) => {
+  detailDialog.value = true
+}
 </script>
 
 <template>
+  <el-dialog
+    v-model="detailDialog"
+    :style="{ borderRadius: '10PX' }"
+    title="查看详情"
+    width="50%"
+    destroy-on-close
+    :show-close="false"
+    :close-on-click-modal="false"
+  >
+    <!-- TODO dialog待完善 -->
+    <template #footer>
+      <el-button text type="danger" @click="detailDialog = false">
+        返回
+      </el-button>
+      <el-button type="primary">确定</el-button>
+    </template>
+  </el-dialog>
   <el-card>
     <el-row :gutter="10" :style="{ marginBottom: '18px' }">
       <el-col :span="4">
@@ -88,14 +94,19 @@ onMounted(() => initTableData())
       v-loading="loading"
       :data="tableData"
       empty-text="暂无数据"
-      @selection-change="handleSelectionChange"
     >
-      <el-table-column type="selection" width="30" align="center" />
       <el-table-column prop="course_name" label="名称" />
-      <el-table-column prop="count" label="人数" align="center">
+      <el-table-column prop="count" label="总人数" align="center">
         <template #default="{ row }">
           <el-tag type="success" disable-transitions>
             {{ row.count }}人
+          </el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column prop="count" label="已选人数" align="center">
+        <template #default="{ row }">
+          <el-tag type="success" disable-transitions>
+            {{ row.selection }}人
           </el-tag>
         </template>
       </el-table-column>
@@ -109,31 +120,15 @@ onMounted(() => initTableData())
         label="所属学院"
         align="center"
       />
-      <el-table-column
-        prop="description"
-        label="课程描述"
-        align="center"
-        show-overflow-tooltip="true"
-      />
       <el-table-column label="操作" align="center" width="180">
         <template #default="{ row }">
           <el-button
             type="primary"
             :style="{ borderRadius: '5px' }"
-            @click="openDialog('update', row)"
+            @click="openDetailDialog(row)"
           >
-            编辑
+            查看详情
           </el-button>
-          <el-popconfirm
-            title="确定删除本条数据吗？"
-            @confirm="handleDelete(row.course_id)"
-          >
-            <template #reference>
-              <el-button type="danger" :style="{ borderRadius: '5px' }">
-                删除
-              </el-button>
-            </template>
-          </el-popconfirm>
         </template>
       </el-table-column>
     </el-table>
