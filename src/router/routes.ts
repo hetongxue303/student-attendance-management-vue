@@ -41,6 +41,12 @@ export const routes: RouteRecordRaw[] = [
         component: () => import('@views/course/me/index.vue')
       },
       {
+        name: 'choice',
+        path: '/course/choice',
+        meta: { title: '选课处理' },
+        component: () => import('@views/course/choice/index.vue')
+      },
+      {
         name: 'all-course',
         path: '/course/all',
         meta: { title: '所有课程' },

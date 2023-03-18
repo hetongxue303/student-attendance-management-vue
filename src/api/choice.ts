@@ -1,6 +1,6 @@
 import axios, { base } from '../utils/request'
 import { QueryChoice } from '../types/query'
-import { Choice } from '../types/entity'
+import { Choice, VOChoice } from '../types/entity'
 
 export const getChoiceListAll = () => {
   return axios({ method: 'GET', url: `${base}/choice/list/all` })
@@ -22,4 +22,14 @@ export const batchDeleteChoice = (data: number[]) => {
 }
 export const updateChoice = (data: Choice) => {
   return axios({ method: 'PUT', url: `${base}/choice/update`, data })
+}
+export const updateChoiceStatus = (data: Choice) => {
+  return axios({ method: 'PUT', url: `${base}/choice/update/status`, data })
+}
+export const updateBatchChoiceStatus = (data: VOChoice) => {
+  return axios({
+    method: 'PUT',
+    url: `${base}/choice/update/status/batch`,
+    data
+  })
 }

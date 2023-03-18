@@ -139,3 +139,8 @@ export interface Choice extends Base {
   course?: Course
   choice_status?: number
 }
+
+export interface VOChoice {
+  ids?: number[]
+  choice_status?: number
+}
