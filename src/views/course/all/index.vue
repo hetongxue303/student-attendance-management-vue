@@ -4,8 +4,6 @@ import { onMounted, reactive, ref, watch } from 'vue'
 import { ElTable, FormInstance } from 'element-plus'
 import { delayRequest } from '../../../utils/common'
 import { clone, cloneDeep } from 'lodash'
-import moment from 'moment'
-import { DATE_TIME_FORMAT } from '../../../settings'
 import {
   ConfirmBox,
   NotificationError,
@@ -198,6 +196,7 @@ const handleChoice = (row: Course) => {
       .then(({ data }) => {
         if (data.code === 200) {
           NotificationSuccess('选课成功')
+          initTableData()
           return
         }
         NotificationError('选课失败,请重试!')
@@ -291,29 +290,23 @@ watch(
         width="30"
         align="center"
       />
-      <el-table-column prop="course_name" label="名称" />
-      <el-table-column prop="count" label="人数" align="center">
-        <template #default="{ row }">
-          <el-tag type="success" disable-transitions>
-            {{ row.count }}人
-          </el-tag>
-        </template>
-      </el-table-column>
+      <el-table-column prop="course_name" label="课程名称" />
+      <el-table-column prop="teacher_name" label="教师姓名" align="center" />
       <el-table-column prop="time" label="学时" align="center">
         <template #default="{ row }">
-          <el-tag type="warning" disable-transitions> {{ row.time }}次</el-tag>
+          {{ row.time }}
         </template>
+      </el-table-column>
+      <el-table-column prop="selection" label="已选" align="center">
+        <template #default="{ row }">{{ row.selection }}</template>
+      </el-table-column>
+      <el-table-column prop="count" label="总人数" align="center">
+        <template #default="{ row }">{{ row.count }}</template>
       </el-table-column>
       <el-table-column
         prop="college.college_name"
-        label="所属学院"
+        label="学院"
         align="center"
-      />
-      <el-table-column
-        prop="description"
-        label="课程描述"
-        align="center"
-        show-overflow-tooltip="true"
       />
       <el-table-column label="操作" align="center" width="180">
         <template #default="{ row }">
@@ -334,12 +327,15 @@ watch(
             编辑
           </el-button>
           <el-popconfirm
-            v-role="['admin']"
             title="确定删除本条数据吗？"
             @confirm="handleDelete(row.course_id)"
           >
             <template #reference>
-              <el-button type="danger" :style="{ borderRadius: '5px' }">
+              <el-button
+                v-role="['admin']"
+                type="danger"
+                :style="{ borderRadius: '5px' }"
+              >
                 删除
               </el-button>
             </template>

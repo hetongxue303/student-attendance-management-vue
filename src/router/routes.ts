@@ -59,6 +59,12 @@ export const routes: RouteRecordRaw[] = [
         component: () => import('@views/attendance/publish/index.vue')
       },
       {
+        name: 'att_student',
+        path: '/attendance/student',
+        meta: { title: '学生签到' },
+        component: () => import('@views/attendance/student/index.vue')
+      },
+      {
         name: 'record',
         path: '/attendance/record',
         meta: { title: '签到记录' },

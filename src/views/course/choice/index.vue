@@ -136,8 +136,19 @@ onMounted(() => initTableData())
     >
       <el-table-column type="selection" width="30" align="center" />
       <el-table-column prop="course.course_name" label="课程名称" />
-      <el-table-column prop="user.real_name" label="学生姓名" />
-      <el-table-column label="选课时间" width="180">
+      <el-table-column prop="user.real_name" label="学生姓名" align="center" />
+      <el-table-column prop="status" label="状态" align="center">
+        <template #default="{ row }">
+          <el-tag
+            v-if="row.choice_status === -1"
+            type="warning"
+            disable-transitions
+          >
+            待处理
+          </el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column label="选课时间" width="180" align="center">
         <template #default="{ row }">
           {{ moment(row.create_time).format(DATE_TIME_FORMAT) }}
         </template>

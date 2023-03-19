@@ -10,7 +10,6 @@ import { useUserStore } from '../../../store/modules/user'
 import {
   addAttendance,
   getAttendanceListByPage,
-  updateAttendance,
   updateAttendanceStatus,
   updateBatchAttendanceStatus
 } from '../../../api/attendance'
@@ -200,8 +199,13 @@ watch(
               <el-tag type="warning" disable-transitions>签到中</el-tag>
             </template>
           </el-table-column>
-          <el-table-column prop="course.count" label="人数">
-            <template #default="{ row }"> {{ row.course.count }}人</template>
+          <el-table-column prop="course.selection" label="课程人数">
+            <template #default="{ row }">
+              {{ row.course.selection }}人
+            </template>
+          </el-table-column>
+          <el-table-column prop="checked_count" label="已签人数">
+            <template #default="{ row }"> {{ row.checked_count }}人 </template>
           </el-table-column>
           <el-table-column label="时长">
             <template #default="{ row }">

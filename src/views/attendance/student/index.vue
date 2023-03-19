@@ -6,18 +6,13 @@ import { delayRequest } from '../../../utils/common'
 import { clone, cloneDeep } from 'lodash'
 import moment from 'moment'
 import { DATE_TIME_FORMAT } from '../../../settings'
+import { addCheck, getCheckListByPageStudent } from '../../../api/check'
+import { Attendance, Check } from '../../../types/entity'
+import { QueryCheck } from '../../../types/query'
 import {
-  ConfirmBox,
   NotificationError,
   NotificationSuccess
 } from '../../../utils/element-plus'
-import { Check } from '../../../types/entity'
-import { QueryCheck } from '../../../types/query'
-import {
-  batchDeleteCheck,
-  deleteCheck,
-  getCheckListByPage
-} from '../../../api/check'
 
 const total = ref(0)
 const loading = ref(false)
@@ -25,18 +20,21 @@ const tableData = ref<Check[]>()
 const tableRef = ref<InstanceType<typeof ElTable>>()
 const selection = ref<Check[]>([])
 const query: QueryCheck = reactive({ page: 1, size: 5 })
-const disabled = reactive({ delete: true })
+const disabled = reactive({
+  add: false,
+  update: true,
+  delete: true,
+  export: true
+})
 const handleCurrent = (page: number) => (query.page = page)
 const handleSize = (size: number) => (query.size = size)
 const handleSelectionChange = (data: Check[]) => (selection.value = data)
-const reset = () => {
-  query.real_name = undefined
-}
+const reset = () => {}
 const initTableData = () => {
   loading.value = true
   delayRequest(
     () => {
-      getCheckListByPage(query)
+      getCheckListByPageStudent(query)
         .then(({ data }) => {
           if (data.code === 200) {
             const { content } = data
@@ -50,6 +48,18 @@ const initTableData = () => {
     500
   )
 }
+const handleCheck = (row: Attendance) => {
+  addCheck({ attendance_id: row.attendance_id, course_id: row.course_id }).then(
+    ({ data }) => {
+      if (data.code === 200) {
+        NotificationSuccess('签到成功')
+        initTableData()
+        return
+      }
+      NotificationError('签到失败,请重试!')
+    }
+  )
+}
 watch(
   () => query,
   () => initTableData(),
@@ -57,34 +67,13 @@ watch(
 )
 watch(
   () => selection.value,
-  () => (disabled.delete = selection.value.length < 1),
+  () => {
+    disabled.update = selection.value.length !== 1
+    disabled.delete = selection.value.length < 1
+  },
   { immediate: true, deep: true }
 )
 onMounted(() => initTableData())
-const handleDelete = (id: number) => {
-  deleteCheck(id).then(async ({ data }) => {
-    if (data.code === 200) {
-      NotificationSuccess('删除成功')
-      initTableData()
-      return
-    }
-    NotificationError('删除失败，请重试!')
-  })
-}
-const handleBatchDelete = () => {
-  ConfirmBox('确认删除选中的数据吗?', '提示', () => {
-    batchDeleteCheck(
-      selection.value.map((item: Check) => item.check_id) as number[]
-    ).then(({ data }) => {
-      if (data.code === 200) {
-        NotificationSuccess('删除成功')
-        initTableData()
-        return
-      }
-      NotificationError('删除失败，请重试!')
-    })
-  })
-}
 </script>
 
 <template>
@@ -103,16 +92,6 @@ const handleBatchDelete = () => {
         </el-button>
       </el-col>
     </el-row>
-    <el-row :gutter="10" :style="{ marginBottom: '15px', marginLeft: '1px' }">
-      <el-button
-        type="danger"
-        :disabled="disabled.delete"
-        :style="{ borderRadius: '5px' }"
-        @click="handleBatchDelete"
-      >
-        批量删除
-      </el-button>
-    </el-row>
     <el-table
       ref="tableRef"
       v-loading="loading"
@@ -120,36 +99,28 @@ const handleBatchDelete = () => {
       empty-text="暂无数据"
       @selection-change="handleSelectionChange"
     >
-      <el-table-column type="selection" width="30" align="center" />
-      <el-table-column prop="check_id" label="ID" width="50" />
-      <el-table-column prop="user.real_name" label="学生" align="center" />
-      <el-table-column
-        prop="attendance.user.real_name"
-        label="教师"
-        align="center"
-      />
-      <el-table-column
-        prop="course.course_name"
-        label="课程名称"
-        align="center"
-      />
-      <el-table-column label="签到时间" width="180" align="center">
+      <el-table-column prop="course.course_name" label="课程名称" />
+      <el-table-column prop="user.real_name" label="教师姓名" />
+      <el-table-column label="状态" width="180">
         <template #default="{ row }">
-          {{ moment(row.check_time).format(DATE_TIME_FORMAT) }}
+          {{ row.status === 0 ? '签到中' : '已结束' }}
+        </template>
+      </el-table-column>
+      <el-table-column label="发布时间" width="180">
+        <template #default="{ row }">
+          {{ moment(row.attendance_time).format(DATE_TIME_FORMAT) }}
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" width="180">
         <template #default="{ row }">
-          <el-popconfirm
-            title="确定删除本条数据吗？"
-            @confirm="handleDelete(row.college_id)"
+          <el-button
+            type="success"
+            :style="{ borderRadius: '5px' }"
+            :disabled="row.is_checked"
+            @click="handleCheck(row)"
           >
-            <template #reference>
-              <el-button type="danger" :style="{ borderRadius: '5px' }">
-                删除
-              </el-button>
-            </template>
-          </el-popconfirm>
+            {{ row.is_checked ? '已签到' : '签到' }}
+          </el-button>
         </template>
       </el-table-column>
     </el-table>

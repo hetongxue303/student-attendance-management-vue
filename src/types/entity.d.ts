@@ -128,6 +128,7 @@ export interface Check extends Base {
   course?: Course
   attendance_id?: number
   attendance?: Attendance
+  is_checked?: boolean
   check_time?: Date
 }
 

@@ -8,6 +8,9 @@ export const getCheckListAll = () => {
 export const getCheckListByPage = (params: QueryCheck) => {
   return axios({ method: 'GET', url: `${base}/check/list`, params })
 }
+export const getCheckListByPageStudent = (params: QueryCheck) => {
+  return axios({ method: 'GET', url: `${base}/check/list/student`, params })
+}
 
 export const addCheck = (data: Check) => {
   return axios({ method: 'POST', url: `${base}/check/add`, data })

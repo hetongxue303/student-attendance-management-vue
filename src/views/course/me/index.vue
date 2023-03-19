@@ -112,13 +112,16 @@ const openDetailDialog = (row: MyCourse) => {
       :data="tableData"
       empty-text="暂无数据"
     >
-      <el-table-column prop="course_name" label="名称" />
-      <el-table-column prop="teacher_name" label="教师" />
+      <el-table-column prop="course_name" label="课程名称" />
+      <el-table-column prop="teacher_name" label="教师姓名" />
       <el-table-column prop="time" label="学时">
-        <template #default="{ row }"> {{ row.time }}次</template>
+        <template #default="{ row }"> {{ row.time }}</template>
       </el-table-column>
-      <el-table-column prop="count" label="人数">
-        <template #default="{ row }"> {{ row.count }}人</template>
+      <el-table-column prop="selection" label="已选">
+        <template #default="{ row }"> {{ row.selection }}</template>
+      </el-table-column>
+      <el-table-column prop="count" label="总人数">
+        <template #default="{ row }"> {{ row.count }}</template>
       </el-table-column>
       <el-table-column v-role="['student']" prop="checked_in" label="签到次数">
         <template #default="{ row }">
