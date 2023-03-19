@@ -36,13 +36,16 @@ export interface QueryCourse extends Page {
 
 export interface QueryCourseMe extends QueryCourse {
   username?: string
+  course_id?: number
 }
 
 export interface QueryCheck extends Page {
   real_name?: string
 }
 
-export interface QueryAttendance extends Page {}
+export interface QueryAttendance extends Page {
+  status?: number
+}
 
 export interface QueryChoice extends Page {
   course_name?: string

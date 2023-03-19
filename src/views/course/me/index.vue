@@ -4,10 +4,11 @@ import { onMounted, reactive, ref, watch } from 'vue'
 import { ElTable } from 'element-plus'
 import { delayRequest } from '../../../utils/common'
 import { clone, cloneDeep } from 'lodash'
-import { MyCourse } from '../../../types/entity'
+import { MyCourse, User } from '../../../types/entity'
 import { QueryCourseMe } from '../../../types/query'
 import { getCourseListMe } from '../../../api/course'
 import { useUserStore } from '../../../store/modules/user'
+import { getUserListByPageCourseById } from '../../../api/user'
 
 const total = ref(0)
 const loading = ref(false)
@@ -49,8 +50,22 @@ watch(
 onMounted(() => initTableData())
 
 const detailDialog = ref(false)
+const detailTotal = ref(0)
+const detailData = ref<User[]>([])
+const detailRef = ref<InstanceType<typeof ElTable>>()
+const detailQuery: QueryCourseMe = reactive({
+  page: 1,
+  size: 5
+})
 const openDetailDialog = (row: MyCourse) => {
   detailDialog.value = true
+  detailQuery.course_id = row.course_id
+  getUserListByPageCourseById(detailQuery).then(({ data }) => {
+    if (data.code === 200) {
+      detailTotal.value = clone(data.content.total)
+      detailData.value = cloneDeep(data.content.record)
+    }
+  })
 }
 </script>
 
@@ -64,7 +79,9 @@ const openDetailDialog = (row: MyCourse) => {
     :show-close="false"
     :close-on-click-modal="false"
   >
-    <!-- TODO dialog待完善 -->
+    <el-table ref="detailRef" :data="detailData" empty-text="暂无数据">
+      <el-table-column prop="real_name" label="姓名" />
+    </el-table>
     <template #footer>
       <el-button text type="danger" @click="detailDialog = false">
         返回
@@ -96,30 +113,35 @@ const openDetailDialog = (row: MyCourse) => {
       empty-text="暂无数据"
     >
       <el-table-column prop="course_name" label="名称" />
-      <el-table-column prop="count" label="总人数" align="center">
+      <el-table-column prop="teacher_name" label="教师" />
+      <el-table-column prop="time" label="学时">
+        <template #default="{ row }"> {{ row.time }}次</template>
+      </el-table-column>
+      <el-table-column prop="count" label="人数">
+        <template #default="{ row }"> {{ row.count }}人</template>
+      </el-table-column>
+      <el-table-column v-role="['student']" prop="checked_in" label="签到次数">
         <template #default="{ row }">
-          <el-tag type="success" disable-transitions>
-            {{ row.count }}人
+          {{
+            row.status === -1 || row.status === 2 ? '无记录' : row.checked_in
+          }}
+        </template>
+      </el-table-column>
+      <el-table-column v-role="['student']" prop="status" label="状态">
+        <template #default="{ row }">
+          <el-tag v-if="row.status === -1" type="warning" disable-transitions>
+            未处理
           </el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column prop="count" label="已选人数" align="center">
-        <template #default="{ row }">
-          <el-tag type="success" disable-transitions>
-            {{ row.selection }}人
+          <el-tag
+            v-else-if="row.status === 1"
+            type="success"
+            disable-transitions
+          >
+            已同意
           </el-tag>
+          <el-tag v-else type="danger" disable-transitions> 已拒绝</el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="time" label="学时" align="center">
-        <template #default="{ row }">
-          <el-tag type="warning" disable-transitions> {{ row.time }}次</el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column
-        prop="college.college_name"
-        label="所属学院"
-        align="center"
-      />
       <el-table-column label="操作" align="center" width="180">
         <template #default="{ row }">
           <el-button

@@ -249,7 +249,11 @@ watch(
         </el-button>
       </el-col>
     </el-row>
-    <el-row :gutter="10" :style="{ marginBottom: '15px', marginLeft: '1px' }">
+    <el-row
+      v-role="['admin']"
+      :gutter="10"
+      :style="{ marginBottom: '15px', marginLeft: '1px' }"
+    >
       <el-button
         type="success"
         :style="{ borderRadius: '5px' }"
@@ -281,7 +285,12 @@ watch(
       empty-text="暂无数据"
       @selection-change="handleSelectionChange"
     >
-      <el-table-column type="selection" width="30" align="center" />
+      <el-table-column
+        v-role="['admin']"
+        type="selection"
+        width="30"
+        align="center"
+      />
       <el-table-column prop="course_name" label="名称" />
       <el-table-column prop="count" label="人数" align="center">
         <template #default="{ row }">
@@ -309,6 +318,7 @@ watch(
       <el-table-column label="操作" align="center" width="180">
         <template #default="{ row }">
           <el-button
+            v-role="['teacher', 'student']"
             type="success"
             :style="{ borderRadius: '5px' }"
             @click="handleChoice(row)"
@@ -316,6 +326,7 @@ watch(
             选课
           </el-button>
           <el-button
+            v-role="['admin']"
             type="primary"
             :style="{ borderRadius: '5px' }"
             @click="openDialog('update', row)"
@@ -323,6 +334,7 @@ watch(
             编辑
           </el-button>
           <el-popconfirm
+            v-role="['admin']"
             title="确定删除本条数据吗？"
             @confirm="handleDelete(row.course_id)"
           >

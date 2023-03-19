@@ -106,8 +106,8 @@ export interface BOCourse extends Course {
 
 export interface MyCourse extends Course {
   checked_in?: number // 已签到次数
-  not_checked_in?: number // 已签到次数
-  remainder?: number // 剩余次数
+  teacher_name?: string
+  status?: number
 }
 
 export interface Attendance extends Base {

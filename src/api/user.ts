@@ -17,6 +17,9 @@ export const getTeacherListAll = () => {
 export const getUserListByPage = (params: QueryUser) => {
   return axios({ method: 'GET', url: `${base}/user/list`, params })
 }
+export const getUserListByPageCourseById = (params: QueryUser) => {
+  return axios({ method: 'GET', url: `${base}/user/list/courseById`, params })
+}
 
 export const addUser = (data: BOUser) => {
   return axios({ method: 'POST', url: `${base}/user/add`, data })

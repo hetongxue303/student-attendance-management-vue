@@ -180,7 +180,11 @@ watch(
         </el-button>
       </el-col>
     </el-row>
-    <el-row :gutter="10" :style="{ marginBottom: '15px', marginLeft: '1px' }">
+    <el-row
+      v-role="['admin']"
+      :gutter="10"
+      :style="{ marginBottom: '15px', marginLeft: '1px' }"
+    >
       <el-button
         type="success"
         :style="{ borderRadius: '5px' }"
@@ -212,7 +216,12 @@ watch(
       empty-text="暂无数据"
       @selection-change="handleSelectionChange"
     >
-      <el-table-column type="selection" width="30" align="center" />
+      <el-table-column
+        v-role="['admin']"
+        type="selection"
+        width="30"
+        align="center"
+      />
       <el-table-column prop="major_id" label="ID" width="50" />
       <el-table-column prop="major_name" label="专业名称" align="center" />
       <el-table-column
@@ -231,7 +240,12 @@ watch(
           {{ moment(row.create_time).format(DATE_TIME_FORMAT) }}
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="180">
+      <el-table-column
+        v-role="['admin']"
+        label="操作"
+        align="center"
+        width="180"
+      >
         <template #default="{ row }">
           <el-button
             type="primary"

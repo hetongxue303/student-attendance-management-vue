@@ -23,3 +23,13 @@ export const batchDeleteAttendance = (data: number[]) => {
 export const updateAttendance = (data: Attendance) => {
   return axios({ method: 'PUT', url: `${base}/attendance/update`, data })
 }
+export const updateAttendanceStatus = (data: Attendance) => {
+  return axios({ method: 'PUT', url: `${base}/attendance/update/status`, data })
+}
+export const updateBatchAttendanceStatus = (data: number[]) => {
+  return axios({
+    method: 'PUT',
+    url: `${base}/attendance/update/status/batch`,
+    data
+  })
+}
