@@ -18,8 +18,11 @@ import {
   NotificationError,
   NotificationSuccess
 } from '../../../utils/element-plus'
-import { QueryAttendance, QueryCourseMe } from '../../../types/query'
+import { QueryAttendance, QueryCourseMe, QueryUser } from '../../../types/query'
 import { getCourseListMe } from '../../../api/course'
+import { getUserByAttendanceId } from '../../../api/user'
+import { DATE_TIME_FORMAT } from '../../../settings'
+import moment from 'moment'
 
 const total = ref(0)
 const loading = ref(false)
@@ -101,7 +104,7 @@ watch(
 )
 watch(
   () => activeName.value,
-  () => (query.status = activeName.value === 'current' ? 0 : 1),
+  (value) => (query.status = value === 'current' ? 0 : 1),
   { deep: true }
 )
 onMounted(() => {
@@ -157,9 +160,133 @@ watch(
   },
   { deep: true }
 )
+
+const detailDialog = ref(false)
+const detailTotal = ref(0)
+const detailLoading = ref(false)
+const detailTableData = ref<Attendance[]>()
+const detailTableRef = ref<InstanceType<typeof ElTable>>()
+const detailActiveName = ref('already')
+const temp = ref<Attendance>({})
+const detailQuery: QueryUser = reactive({
+  page: 1,
+  size: 5
+})
+const handleDetailCurrent = (page: number) => (detailQuery.page = page)
+const handleDetailSize = (size: number) => (detailQuery.size = size)
+const handleDetailClick = (tab: TabsPaneContext) =>
+  (detailActiveName.value = tab.paneName as string)
+const initDetailData = () => {
+  detailLoading.value = true
+  delayRequest(
+    () => {
+      detailQuery.attendance_id = temp.value.attendance_id
+      detailQuery.status = detailActiveName.value === 'already'
+      getUserByAttendanceId(detailQuery)
+        .then(({ data }) => {
+          if (data.code === 200) {
+            const { content } = data
+            detailTotal.value = clone(content.total)
+            detailTableData.value = cloneDeep(content.record)
+          }
+        })
+        .finally(() => (detailLoading.value = false))
+    },
+    5,
+    500
+  )
+}
+watch(
+  () => detailActiveName.value,
+  () => initDetailData(),
+  { deep: true }
+)
+const openDetail = (row: Attendance) => {
+  temp.value = row
+  initDetailData()
+  detailDialog.value = true
+}
 </script>
 
 <template>
+  <el-dialog
+    v-model="detailDialog"
+    title="签到详情"
+    width="70%"
+    destroy-on-close
+    :show-close="false"
+    :close-on-click-modal="false"
+    :style="{ borderRadius: '10px' }"
+  >
+    <el-tabs v-model="detailActiveName" @tab-click="handleDetailClick">
+      <el-tab-pane label="已签到" name="already">
+        <el-table
+          ref="detailTableRef"
+          v-loading="detailLoading"
+          :data="detailTableData"
+          empty-text="暂无数据"
+        >
+          <el-table-column prop="user.username" label="学号" />
+          <el-table-column prop="user.real_name" label="姓名" />
+          <el-table-column prop="is_checked" label="性别">
+            <template #default="{ row }">
+              {{ row.gender === 1 ? '男' : '女' }}
+            </template>
+          </el-table-column>
+          <el-table-column prop="is_checked" label="状态">
+            <template #default="{ row }">
+              {{ row.is_checked ? '已签到' : '未签到' }}
+            </template>
+          </el-table-column>
+          <el-table-column label="签到时间" width="180" align="center">
+            <template #default="{ row }">
+              {{ moment(row.check_time).format(DATE_TIME_FORMAT) }}
+            </template>
+          </el-table-column>
+        </el-table>
+        <Pagination
+          :current-page="detailQuery.page"
+          :page-size="detailQuery.size"
+          :total="detailTotal"
+          @current-change="handleDetailCurrent"
+          @size-change="handleDetailSize"
+        />
+      </el-tab-pane>
+      <el-tab-pane label="未签到" name="no-check">
+        <el-table
+          ref="detailTableRef"
+          v-loading="detailLoading"
+          :data="detailTableData"
+          empty-text="暂无数据"
+        >
+          <el-table-column prop="user.username" label="学号" />
+          <el-table-column prop="user.real_name" label="姓名" />
+          <el-table-column prop="is_checked" label="性别">
+            <template #default="{ row }">
+              {{ row.gender === 1 ? '男' : '女' }}
+            </template>
+          </el-table-column>
+          <el-table-column prop="is_checked" label="状态">
+            <template #default="{ row }">
+              {{ row.is_checked ? '已签到' : '未签到' }}
+            </template>
+          </el-table-column>
+        </el-table>
+        <Pagination
+          :current-page="detailQuery.page"
+          :page-size="detailQuery.size"
+          :total="detailTotal"
+          @current-change="handleDetailCurrent"
+          @size-change="handleDetailSize"
+        />
+      </el-tab-pane>
+    </el-tabs>
+    <template #footer>
+      <el-button type="danger" text @click="detailDialog = false">
+        关闭
+      </el-button>
+    </template>
+  </el-dialog>
   <el-card>
     <el-row :gutter="10" :style="{ marginBottom: '18px' }">
       <el-col :span="4">
@@ -205,7 +332,7 @@ watch(
             </template>
           </el-table-column>
           <el-table-column prop="checked_count" label="已签人数">
-            <template #default="{ row }"> {{ row.checked_count }}人 </template>
+            <template #default="{ row }"> {{ row.checked_count }}人</template>
           </el-table-column>
           <el-table-column label="时长">
             <template #default="{ row }">
@@ -223,11 +350,18 @@ watch(
           <el-table-column label="操作" align="center" width="220">
             <template #default="{ row }">
               <el-button
+                type="success"
+                :style="{ borderRadius: '5px' }"
+                @click="openDetail(row)"
+              >
+                详情
+              </el-button>
+              <el-button
                 type="warning"
                 :style="{ borderRadius: '5px' }"
                 @click="handleCheckedEnd(row)"
               >
-                结束签到
+                结束
               </el-button>
             </template>
           </el-table-column>
@@ -251,16 +385,27 @@ watch(
           <el-table-column label="时长">
             <template #default="{ row }"> {{ row.time }}分钟</template>
           </el-table-column>
+          <el-table-column label="状态">
+            <template #default>
+              <el-tag type="success" disable-transitions effect="dark">
+                已结束
+              </el-tag>
+            </template>
+          </el-table-column>
           <el-table-column
             prop="course.college.college_name"
             label="所属学院"
             align="center"
           />
           <el-table-column label="操作" align="center" width="220">
-            <template #default>
-              <el-tag type="success" disable-transitions effect="dark">
-                已结束
-              </el-tag>
+            <template #default="{ row }">
+              <el-button
+                type="success"
+                :style="{ borderRadius: '5px' }"
+                @click="openDetail(row)"
+              >
+                查看详情
+              </el-button>
             </template>
           </el-table-column>
         </el-table>

@@ -18,6 +18,8 @@ export interface QueryClasses extends Page {
 export interface QueryUser extends Page {
   real_name?: string
   username?: string
+  attendance_id?: number
+  status?: boolean
 }
 
 export interface QueryRole extends Page {

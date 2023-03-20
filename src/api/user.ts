@@ -7,6 +7,13 @@ import { MessageWarning } from '../utils/element-plus'
 export const getUserListAll = () => {
   return axios({ method: 'GET', url: `${base}/user/list/all` })
 }
+export const getUserByAttendanceId = (params: QueryUser) => {
+  return axios({
+    method: 'GET',
+    url: `${base}/user/list/byAttendanceId`,
+    params
+  })
+}
 export const getTeacherListAll = () => {
   return axios({
     method: 'GET',
