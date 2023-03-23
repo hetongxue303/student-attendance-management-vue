@@ -1,6 +1,7 @@
 import { ElMessage, ElMessageBox, ElNotification } from 'element-plus'
 import { DURATION_TIME } from '../settings'
 
+// 消息框
 export const NotificationSuccess = (
   message: string,
   duration: number = DURATION_TIME
