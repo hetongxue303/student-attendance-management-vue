@@ -104,7 +104,14 @@ onMounted(() => {
 <template>
   <div class="login-container">
     <div class="login-box">
-      <div class="left" />
+      <div class="left">
+        <div class="left-content">
+          <h1 style="font-size: 38px; font-weight: bold">学生考勤管理系统</h1>
+          <h1 style="font-size: 18px; font-weight: bold; margin-top: 50px">
+            重庆移通学院
+          </h1>
+        </div>
+      </div>
       <div class="right">
         <h2 class="right-title">欢迎回来</h2>
         <div class="right-box">
@@ -184,6 +191,19 @@ onMounted(() => {
 </template>
 
 <style scoped lang="scss">
+.left-content {
+  background: linear-gradient(to right, red, blue);
+  -webkit-background-clip: text;
+  color: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  margin-top: -20px;
+}
+
 .login-container {
   width: 100vw;
   height: 100vh;
