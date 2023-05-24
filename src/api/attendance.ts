@@ -3,7 +3,10 @@ import { Attendance } from '../types/entity'
 import { QueryAttendance } from '../types/query'
 
 export const getAttendanceListAll = () => {
-  return axios({ method: 'GET', url: `${base}/attendance/list/all` })
+  return axios({
+    method: 'GET',
+    url: `http://127.0.0.1:8181/attendance/list/all`
+  })
 }
 export const getAttendanceListByPage = (params: QueryAttendance) => {
   return axios({ method: 'GET', url: `${base}/attendance/list`, params })
